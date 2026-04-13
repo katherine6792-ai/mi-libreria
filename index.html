@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Librería Local - Catálogo y Pedidos</title>
+    <title>Mi Librería Local - Buscador y Carrito</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root { --primary-color: #2c3e50; --accent-color: #e67e22; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
         .navbar { background-color: var(--primary-color) !important; }
-        .card { border: none; border-radius: 15px; transition: transform 0.3s; }
-        .card:hover { transform: translateY(-5px); }
-        .card-img-top { height: 220px; object-fit: cover; border-radius: 15px 15px 0 0; }
-        .precio { color: var(--accent-color); font-weight: bold; font-size: 1.2rem; }
-        #floating-cart { 
-            position: fixed; bottom: 25px; right: 25px; z-index: 1000; 
-            width: 70px; height: 70px; border-radius: 50%; font-size: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .badge-cart { position: absolute; top: 0; right: 0; font-size: 0.8rem; }
+        .card { border: none; border-radius: 12px; transition: transform 0.2s; height: 100%; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+        .card-img-top { height: 180px; object-fit: contain; background: #fff; padding: 10px; border-radius: 12px 12px 0 0; }
+        .precio { color: var(--accent-color); font-weight: bold; }
+        #floating-cart { position: fixed; bottom: 25px; right: 25px; z-index: 1000; width: 65px; height: 65px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .badge-cart { position: absolute; top: 0; right: 0; }
+        .search-container { max-width: 500px; margin: -25px auto 20px; }
+        .search-input { border-radius: 25px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 12px 25px; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark shadow-sm">
+<nav class="navbar navbar-dark pb-5">
     <div class="container justify-content-center">
         <span class="navbar-brand h1 mb-0">📚 MI LIBRERÍA LOCAL</span>
     </div>
 </nav>
 
-<div class="container py-4">
-    <h4 class="text-secondary mb-4 text-center">Libros Disponibles</h4>
+<div class="container">
+    <div class="search-container">
+        <input type="text" id="buscador" class="form-control search-input" placeholder="Buscar por título o autor..." onkeyup="filtrarLibros()">
+    </div>
+
     <div id="catalogo" class="row g-3">
         <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2">Cargando tesoros literarios...</p>
+            <p class="mt-2">Sincronizando con inventario...</p>
         </div>
     </div>
 </div>
@@ -43,45 +44,37 @@
     🛒 <span id="cart-count" class="badge bg-danger rounded-pill badge-cart">0</span>
 </button>
 
-<div class="modal fade" id="modalCarrito" tabindex="-1" aria-labelledby="modalCarritoLabel" aria-hidden="true">
+<div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header bg-light">
-        <h5 class="modal-title" id="modalCarritoLabel">Mi Carrito de Compras</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header">
+        <h5 class="modal-title">Mi Pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <ul id="lista-carrito" class="list-group mb-3 shadow-sm text-center">
-            </ul>
-        <div class="d-flex justify-content-between align-items-center px-2 mb-3">
-            <span class="h5">Total a pagar:</span>
+        <ul id="lista-carrito" class="list-group mb-3 text-center"></ul>
+        <div class="d-flex justify-content-between mb-3 px-2">
+            <span class="h5">Total:</span>
             <span id="total-pedido" class="h4 text-success fw-bold">$0</span>
         </div>
-        
         <hr>
-        
         <div class="row g-2">
-            <div class="col-12"><label class="form-label small fw-bold">Nombre Completo:</label><input type="text" id="c_nombre" class="form-control" placeholder="¿A quién buscamos?"></div>
-            <div class="col-12"><label class="form-label small fw-bold">Celular de contacto:</label><input type="tel" id="c_celular" class="form-control" placeholder="Ej: 3001234567"></div>
+            <div class="col-12"><input type="text" id="c_nombre" class="form-control" placeholder="Nombre completo"></div>
+            <div class="col-12"><input type="tel" id="c_celular" class="form-control" placeholder="Celular (WhatsApp)"></div>
             <div class="col-12">
-                <label class="form-label small fw-bold">Método de Entrega:</label>
                 <select id="c_entrega" class="form-select" onchange="toggleEnvio()">
                     <option value="Recojo en tienda">Recojo en Tienda Física (Gratis)</option>
                     <option value="Envio">Solicitar Envío (Pago contra entrega)</option>
                 </select>
             </div>
         </div>
-
         <div id="seccion-envio" class="mt-3 p-3 bg-light rounded border" style="display:none;">
-            <div class="mb-2"><label class="form-label small fw-bold">Ciudad / Municipio:</label><input type="text" id="c_ciudad" class="form-control" placeholder="Bogotá, Medellín..."></div>
-            <div class="mb-2"><label class="form-label small fw-bold">Dirección de entrega:</label><input type="text" id="c_direccion" class="form-control" placeholder="Calle 123 # 45 - 67"></div>
-            <p class="text-muted" style="font-size: 0.75rem;">* El valor del envío se calcula por transportadora y se paga al recibir el paquete.</p>
+            <input type="text" id="c_ciudad" class="form-control mb-2" placeholder="Ciudad">
+            <input type="text" id="c_direccion" class="form-control" placeholder="Dirección exacta">
         </div>
       </div>
-      <div class="modal-footer border-0">
-        <button class="btn btn-success w-100 btn-lg shadow" onclick="procesarCompra()">
-            Finalizar y Pedir por WhatsApp
-        </button>
+      <div class="modal-footer">
+        <button class="btn btn-success w-100 btn-lg" onclick="procesarCompra()">Pedir por WhatsApp</button>
       </div>
     </div>
   </div>
@@ -89,150 +82,124 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // --- CONFIGURACIÓN ---
     const API_URL = "https://script.google.com/macros/s/AKfycbwoxVK7fB2_qEqay0XKjNSa67y0g_GBCTZbn1oBjtaygEVuSGoUSaDqXc5fZ0hiJXkxnA/exec";
+    let TODOS_LOS_LIBROS = [];
     let carrito = [];
     const modalUI = new bootstrap.Modal(document.getElementById('modalCarrito'));
 
-    // --- CARGAR LIBROS ---
     async function cargarInventario() {
         try {
             const respuesta = await fetch(API_URL);
-            const libros = await respuesta.json();
-            const contenedor = document.getElementById('catalogo');
-            contenedor.innerHTML = '';
-
-            libros.forEach(libro => {
-                let urlImagen = libro.Imagen_URL || 'https://via.placeholder.com/300x400?text=Sin+Foto';
-                
-                // Reparar enlace de Drive si es necesario
-                if (urlImagen.includes('drive.google.com')) {
-                    const idDrive = urlImagen.split('/d/')[1].split('/')[0];
-                    urlImagen = `https://lh3.googleusercontent.com/d/$${idDrive}`;
-                }
-
-                if(libro.Stock > 0) {
-                    contenedor.innerHTML += `
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <div class="card h-100 shadow-sm border-0">
-                            <img src="${urlImagen}" class="card-img-top shadow-sm" onerror="this.src='https://via.placeholder.com/300x400?text=Revisar+Imagen'">
-                            <div class="card-body p-2 d-flex flex-column">
-                                <span class="badge bg-light text-dark mb-1 border small" style="width: fit-content;">${libro.Estado}</span>
-                                <h6 class="card-title text-truncate mb-1" style="font-size: 0.9rem;">${libro.Titulo}</h6>
-                                <p class="precio mb-2">$${Number(libro.Precio).toLocaleString('es-CO')}</p>
-                                <button class="btn btn-primary btn-sm mt-auto" onclick="agregarAlCarrito('${libro.Titulo}', ${libro.Precio})">
-                                    + Agregar
-                                </button>
-                            </div>
-                        </div>
-                    </div>`;
-                }
-            });
+            TODOS_LOS_LIBROS = await respuesta.json();
+            mostrarLibros(TODOS_LOS_LIBROS);
         } catch (e) {
-            document.getElementById('catalogo').innerHTML = '<p class="text-center">Error de conexión. Revisa el Excel.</p>';
+            document.getElementById('catalogo').innerHTML = '<p class="text-center">Error al conectar con el inventario.</p>';
         }
     }
 
-    // --- LÓGICA DEL CARRITO ---
+    function mostrarLibros(lista) {
+        const contenedor = document.getElementById('catalogo');
+        contenedor.innerHTML = '';
+        
+        if(lista.length === 0) {
+            contenedor.innerHTML = '<p class="text-center mt-5">No se encontraron libros con ese nombre.</p>';
+            return;
+        }
+
+        lista.forEach(libro => {
+            if(libro.Stock > 0) {
+                let idDrive = "";
+                let urlFinal = "https://via.placeholder.com/300x400?text=Sin+Imagen";
+                
+                if (libro.Imagen_URL && libro.Imagen_URL.includes('id=')) {
+                    idDrive = libro.Imagen_URL.split('id=')[1].split('&')[0];
+                } else if (libro.Imagen_URL && libro.Imagen_URL.includes('/d/')) {
+                    idDrive = libro.Imagen_URL.split('/d/')[1].split('/')[0];
+                }
+
+                if(idDrive) urlFinal = `https://lh3.googleusercontent.com/u/0/d/${idDrive}`;
+
+                contenedor.innerHTML += `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card shadow-sm">
+                        <img src="${urlFinal}" class="card-img-top" onerror="this.src='https://via.placeholder.com/150?text=Libro'">
+                        <div class="card-body p-2 d-flex flex-column">
+                            <h6 class="card-title text-truncate mb-1 small fw-bold">${libro.Titulo}</h6>
+                            <p class="text-muted mb-1" style="font-size: 0.7rem;">${libro.Autor}</p>
+                            <p class="precio mb-2 small">$${Number(libro.Precio).toLocaleString('es-CO')}</p>
+                            <button class="btn btn-primary btn-sm mt-auto" onclick="agregarAlCarrito('${libro.Titulo}', ${libro.Precio})">+ Agregar</button>
+                        </div>
+                    </div>
+                </div>`;
+            }
+        });
+    }
+
+    function filtrarLibros() {
+        const busqueda = document.getElementById('buscador').value.toLowerCase();
+        const filtrados = TODOS_LOS_LIBROS.filter(l => 
+            l.Titulo.toLowerCase().includes(busqueda) || 
+            l.Autor.toLowerCase().includes(busqueda)
+        );
+        mostrarLibros(filtrados);
+    }
+
     function agregarAlCarrito(t, p) {
         carrito.push({titulo: t, precio: p});
         document.getElementById('cart-count').innerText = carrito.length;
-        // Animación breve al botón
-        const btn = document.getElementById('floating-cart');
-        btn.classList.add('btn-success');
-        setTimeout(() => btn.classList.remove('btn-success'), 500);
     }
 
     function abrirCarrito() {
-        if(carrito.length === 0) { alert("¡El carrito está vacío!"); return; }
-        
+        if(carrito.length === 0) { alert("El carrito está vacío"); return; }
         const lista = document.getElementById('lista-carrito');
         let total = 0;
         lista.innerHTML = '';
-        
         carrito.forEach((item, index) => {
             total += item.precio;
-            lista.innerHTML += `
-            <li class="list-group-item d-flex justify-content-between align-items-center small py-2">
-                <span class="text-truncate" style="max-width: 180px;">${item.titulo}</span>
-                <span class="fw-bold">$${item.precio.toLocaleString('es-CO')}</span>
-                <button class="btn btn-sm text-danger" onclick="eliminarDelCarrito(${index})">✕</button>
+            lista.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 small">
+                ${item.titulo} <span>$${item.precio.toLocaleString('es-CO')}</span>
+                <button class="btn btn-sm text-danger" onclick="eliminarItem(${index})">✕</button>
             </li>`;
         });
-        
         document.getElementById('total-pedido').innerText = `$${total.toLocaleString('es-CO')}`;
         modalUI.show();
     }
 
-    function eliminarDelCarrito(index) {
-        carrito.splice(index, 1);
+    function eliminarItem(i) {
+        carrito.splice(i, 1);
         document.getElementById('cart-count').innerText = carrito.length;
         if(carrito.length === 0) modalUI.hide(); else abrirCarrito();
     }
 
     function toggleEnvio() {
-        const esEnvio = document.getElementById('c_entrega').value === 'Envio';
-        document.getElementById('seccion-envio').style.display = esEnvio ? 'block' : 'none';
+        document.getElementById('seccion-envio').style.display = document.getElementById('c_entrega').value === 'Envio' ? 'block' : 'none';
     }
 
-    // --- FINALIZAR PROCESO ---
     async function procesarCompra() {
-        const nombre = document.getElementById('c_nombre').value.trim();
-        const celular = document.getElementById('c_celular').value.trim();
-        const entrega = document.getElementById('c_entrega').value;
-        const ciudad = document.getElementById('c_ciudad').value.trim();
-        const direccion = document.getElementById('c_direccion').value.trim();
+        const n = document.getElementById('c_nombre').value;
+        const c = document.getElementById('c_celular').value;
+        if(!n || !c) { alert("Completa nombre y celular"); return; }
 
-        if(!nombre || !celular) { alert("Nombre y celular son necesarios para contactarte."); return; }
-        if(entrega === 'Envio' && (!ciudad || !direccion)) { alert("Por favor completa ciudad y dirección para el envío."); return; }
-
-        const titulos = carrito.map(i => i.titulo).join(", ");
-        const total = carrito.reduce((acc, obj) => acc + obj.precio, 0);
-
-        const datosRegistro = {
-            libros: titulos,
-            cliente: nombre,
-            celular: celular,
-            entrega: entrega,
-            ciudad: ciudad || "Tienda Física",
-            direccion: direccion || "N/A",
-            total: total
+        const datos = {
+            libros: carrito.map(i => i.titulo).join(", "),
+            cliente: n,
+            celular: c,
+            entrega: document.getElementById('c_entrega').value,
+            ciudad: document.getElementById('c_ciudad').value || "N/A",
+            direccion: document.getElementById('c_direccion').value || "N/A",
+            total: carrito.reduce((a, b) => a + b.precio, 0)
         };
 
-        // Enviar a Google Sheets (Agente Virtual)
-        try {
-            fetch(API_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify(datosRegistro) 
-            });
-        } catch(e) { console.error("Error en registro:", e); }
+        fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(datos) });
 
-        // Crear mensaje para WhatsApp
-        let msg = `📚 *NUEVO PEDIDO - LIBRERÍA*\n\n`;
-        msg += `👤 *Cliente:* ${nombre}\n`;
-        msg += `📱 *Celular:* ${celular}\n`;
-        msg += `📖 *Libros:* ${titulos}\n`;
-        msg += `📍 *Entrega:* ${entrega}\n`;
+        let msg = `📚 *PEDIDO:* ${datos.libros}\n👤 *Cliente:* ${n}\n📱 *Celular:* ${c}\n🚚 *Entrega:* ${datos.entrega}\n💰 *TOTAL:* $${datos.total.toLocaleString('es-CO')}`;
+        window.open(`https://wa.me/573174663378?text=${encodeURIComponent(msg)}`);
         
-        if(entrega === 'Envio') {
-            msg += `🏠 *Dirección:* ${direccion}\n`;
-            msg += `🌆 *Ciudad:* ${ciudad}\n`;
-        }
-        
-        msg += `\n💰 *TOTAL:* $${total.toLocaleString('es-CO')}\n`;
-        msg += `\n_Hola! Acabo de hacer este pedido por la web. ¿Cómo coordinamos el pago?_`;
-
-        // Abrir WhatsApp
-        window.open(`https://wa.me/573174663378?text=${encodeURIComponent(msg)}`, '_blank');
-        
-        // Limpiar todo
         carrito = [];
         document.getElementById('cart-count').innerText = 0;
         modalUI.hide();
     }
 
-    // Iniciar
     cargarInventario();
 </script>
 </body>
