@@ -8,6 +8,8 @@
     <style>
         .card-img-top { height: 250px; object-fit: cover; }
         .precio { color: #2c3e50; font-weight: bold; font-size: 1.4rem; }
+        .card { transition: transform 0.2s; }
+        .card:hover { transform: scale(1.02); }
     </style>
 </head>
 <body class="bg-light">
@@ -19,14 +21,14 @@
 </nav>
 
 <div class="container py-5">
-    <h2 class="mb-4">Catálogo Disponible</h2>
+    <h2 class="mb-4 text-center">Catálogo Disponible</h2>
     <div id="catalogo" class="row g-4">
         <p class="text-center">Consultando disponibilidad en tiempo real...</p>
     </div>
 </div>
 
 <script>
-    // Tu URL de Google Apps Script
+    // URL de tu base de datos en Google Sheets
     const API_URL = "https://script.google.com/macros/s/AKfycbwoxVK7fB2_qEqay0XKjNSa67y0g_GBCTZbn1oBjtaygEVuSGoUSaDqXc5fZ0hiJXkxnA/exec";
 
     async function cargarInventario() {
@@ -36,33 +38,26 @@
             const contenedor = document.getElementById('catalogo');
             contenedor.innerHTML = '';
 
-async function cargarInventario() {
-        try {
-            const respuesta = await fetch(API_URL);
-            const libros = await respuesta.json();
-            const contenedor = document.getElementById('catalogo');
-            contenedor.innerHTML = '';
-
             libros.forEach(libro => {
-                // FUNCIÓN PARA REPARAR EL ENLACE DE DRIVE
+                // Lógica para reparar el enlace de Google Drive
                 let urlImagen = libro.Imagen_URL || 'https://via.placeholder.com/300x400?text=Sin+Foto';
                 
                 if (urlImagen.includes('drive.google.com')) {
-                    // Extrae el ID del archivo y crea el enlace directo
                     const idDrive = urlImagen.split('/d/')[1].split('/')[0];
-                    urlImagen = `https://lh3.googleusercontent.com/u/0/d/${idDrive}`;
+                    // Esta es la URL corregida para que Google Drive permita ver la imagen directamente
+                    urlImagen = `https://lh3.googleusercontent.com/d/${idDrive}`;
                 }
 
                 if(libro.Stock > 0) {
                     contenedor.innerHTML += `
                     <div class="col-6 col-md-4 col-lg-3">
                         <div class="card h-100 border-0 shadow-sm">
-                            <img src="${urlImagen}" class="card-img-top" alt="${libro.Titulo}" onerror="this.src='https://via.placeholder.com/300x400?text=Error+Imagen'">
+                            <img src="${urlImagen}" class="card-img-top" alt="${libro.Titulo}" onerror="this.src='https://via.placeholder.com/300x400?text=Verificar+Enlace'">
                             <div class="card-body">
                                 <span class="badge bg-secondary mb-2">${libro.Estado}</span>
                                 <h6 class="card-title text-truncate">${libro.Titulo}</h6>
                                 <p class="small text-muted">${libro.Autor}</p>
-                                <p class="precio">$${libro.Precio.toLocaleString('es-CO')}</p>
+                                <p class="precio">$${Number(libro.Precio).toLocaleString('es-CO')}</p>
                                 <button class="btn btn-primary w-100" onclick="comprar('${libro.Titulo}', '${libro.Precio}')">Comprar</button>
                             </div>
                         </div>
@@ -71,17 +66,18 @@ async function cargarInventario() {
             });
         } catch (error) {
             console.error("Error cargando inventario:", error);
+            document.getElementById('catalogo').innerHTML = "<p class='text-center'>Hubo un error al cargar los libros. Revisa la conexión.</p>";
         }
     }
 
     function comprar(titulo, precio) {
-        // Notificación por WhatsApp (Agente Virtual inicial)
-        const telefono = "573174663378"; // REEMPLAZA CON TU NÚMERO
+        const telefono = "573174663378"; 
         const mensaje = `¡Hola! Me interesa el libro: *${titulo}*. Tiene un valor de $${precio}. ¿Cómo puedo proceder con el pago?`;
         const urlWa = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
         window.open(urlWa, '_blank');
     }
 
+    // Ejecutar la carga al abrir la página
     cargarInventario();
 </script>
 </body>
