@@ -3,60 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Librería Local - Buscador y Carrito</title>
+    <title>Mi Librería Local - Catálogo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root { --primary-color: #2c3e50; --accent-color: #e67e22; }
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .navbar { background-color: var(--primary-color) !important; }
-        .card { border: none; border-radius: 12px; transition: transform 0.2s; height: 100%; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
-        .card-img-top { height: 180px; object-fit: contain; background: #fff; padding: 10px; border-radius: 12px 12px 0 0; }
-        .precio { color: var(--accent-color); font-weight: bold; }
+        
+        /* Ajuste de la cabecera */
+        .navbar { background-color: var(--primary-color) !important; padding: 1.5rem 0; }
+        
+        /* Espaciado real para la barra de búsqueda */
+        .search-section { 
+            background: white; 
+            padding: 20px 0; 
+            margin-bottom: 30px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+        .search-input { 
+            border-radius: 25px; 
+            border: 2px solid #eee; 
+            padding: 12px 25px; 
+            transition: all 0.3s;
+        }
+        .search-input:focus { 
+            border-color: var(--accent-color); 
+            box-shadow: 0 0 8px rgba(230, 126, 34, 0.2); 
+            outline: none;
+        }
+
+        /* Estilo de las tarjetas de libros */
+        .card { border: none; border-radius: 12px; transition: transform 0.2s; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .card:hover { transform: translateY(-5px); }
+        .card-img-top { height: 200px; object-fit: contain; background: #fff; padding: 15px; border-radius: 12px 12px 0 0; }
+        .precio { color: var(--accent-color); font-weight: bold; font-size: 1.1rem; }
+        
+        /* Carrito flotante */
         #floating-cart { position: fixed; bottom: 25px; right: 25px; z-index: 1000; width: 65px; height: 65px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .badge-cart { position: absolute; top: 0; right: 0; }
-        .search-container { max-width: 500px; margin: -25px auto 20px; }
-        .search-input { border-radius: 25px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); padding: 12px 25px; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark pb-5">
+<nav class="navbar navbar-dark">
     <div class="container justify-content-center">
         <span class="navbar-brand h1 mb-0">📚 MI LIBRERÍA LOCAL</span>
     </div>
 </nav>
 
-<div class="container">
-    <div class="search-container">
-        <input type="text" id="buscador" class="form-control search-input" placeholder="Buscar por título o autor..." onkeyup="filtrarLibros()">
+<div class="search-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <input type="text" id="buscador" class="form-control search-input" placeholder="🔍 Buscar por título o autor..." onkeyup="filtrarLibros()">
+            </div>
+        </div>
     </div>
+</div>
 
-    <div id="catalogo" class="row g-3">
+<div class="container pb-5">
+    <div id="catalogo" class="row g-4">
         <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2">Sincronizando con inventario...</p>
+            <p class="mt-2">Actualizando catálogo...</p>
         </div>
     </div>
 </div>
 
 <button id="floating-cart" class="btn btn-primary d-flex align-items-center justify-content-center" onclick="abrirCarrito()">
-    🛒 <span id="cart-count" class="badge bg-danger rounded-pill badge-cart">0</span>
+    🛒 <span id="cart-count" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">0</span>
 </button>
 
 <div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Mi Pedido</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+      <div class="modal-header"><h5 class="modal-title">Mi Pedido</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body">
-        <ul id="lista-carrito" class="list-group mb-3 text-center"></ul>
-        <div class="d-flex justify-content-between mb-3 px-2">
-            <span class="h5">Total:</span>
-            <span id="total-pedido" class="h4 text-success fw-bold">$0</span>
-        </div>
+        <ul id="lista-carrito" class="list-group mb-3"></ul>
+        <div class="d-flex justify-content-between mb-3 px-2"><span class="h5">Total:</span><span id="total-pedido" class="h4 text-success fw-bold">$0</span></div>
         <hr>
         <div class="row g-2">
             <div class="col-12"><input type="text" id="c_nombre" class="form-control" placeholder="Nombre completo"></div>
@@ -73,9 +95,7 @@
             <input type="text" id="c_direccion" class="form-control" placeholder="Dirección exacta">
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-success w-100 btn-lg" onclick="procesarCompra()">Pedir por WhatsApp</button>
-      </div>
+      <div class="modal-footer"><button class="btn btn-success w-100 btn-lg" onclick="procesarCompra()">Finalizar por WhatsApp</button></div>
     </div>
   </div>
 </div>
@@ -93,7 +113,7 @@
             TODOS_LOS_LIBROS = await respuesta.json();
             mostrarLibros(TODOS_LOS_LIBROS);
         } catch (e) {
-            document.getElementById('catalogo').innerHTML = '<p class="text-center">Error al conectar con el inventario.</p>';
+            document.getElementById('catalogo').innerHTML = '<p class="text-center">Error al conectar con la base de datos.</p>';
         }
     }
 
@@ -101,23 +121,14 @@
         const contenedor = document.getElementById('catalogo');
         contenedor.innerHTML = '';
         
-        if(lista.length === 0) {
-            contenedor.innerHTML = '<p class="text-center mt-5">No se encontraron libros con ese nombre.</p>';
-            return;
-        }
-
         lista.forEach(libro => {
             if(libro.Stock > 0) {
+                // Lógica de imagen mejorada
                 let idDrive = "";
-                let urlFinal = "https://via.placeholder.com/300x400?text=Sin+Imagen";
-                
-                if (libro.Imagen_URL && libro.Imagen_URL.includes('id=')) {
-                    idDrive = libro.Imagen_URL.split('id=')[1].split('&')[0];
-                } else if (libro.Imagen_URL && libro.Imagen_URL.includes('/d/')) {
-                    idDrive = libro.Imagen_URL.split('/d/')[1].split('/')[0];
-                }
+                if (libro.Imagen_URL && libro.Imagen_URL.includes('id=')) idDrive = libro.Imagen_URL.split('id=')[1].split('&')[0];
+                else if (libro.Imagen_URL && libro.Imagen_URL.includes('/d/')) idDrive = libro.Imagen_URL.split('/d/')[1].split('/')[0];
 
-                if(idDrive) urlFinal = `https://lh3.googleusercontent.com/u/0/d/${idDrive}`;
+                const urlFinal = idDrive ? `https://lh3.googleusercontent.com/u/0/d/${idDrive}` : 'https://via.placeholder.com/300x400?text=Sin+Foto';
 
                 contenedor.innerHTML += `
                 <div class="col-6 col-md-4 col-lg-3">
@@ -125,8 +136,8 @@
                         <img src="${urlFinal}" class="card-img-top" onerror="this.src='https://via.placeholder.com/150?text=Libro'">
                         <div class="card-body p-2 d-flex flex-column">
                             <h6 class="card-title text-truncate mb-1 small fw-bold">${libro.Titulo}</h6>
-                            <p class="text-muted mb-1" style="font-size: 0.7rem;">${libro.Autor}</p>
-                            <p class="precio mb-2 small">$${Number(libro.Precio).toLocaleString('es-CO')}</p>
+                            <p class="text-muted mb-1" style="font-size: 0.75rem;">${libro.Autor}</p>
+                            <p class="precio mb-2">$${Number(libro.Precio).toLocaleString('es-CO')}</p>
                             <button class="btn btn-primary btn-sm mt-auto" onclick="agregarAlCarrito('${libro.Titulo}', ${libro.Precio})">+ Agregar</button>
                         </div>
                     </div>
@@ -150,7 +161,7 @@
     }
 
     function abrirCarrito() {
-        if(carrito.length === 0) { alert("El carrito está vacío"); return; }
+        if(carrito.length === 0) return alert("El carrito está vacío");
         const lista = document.getElementById('lista-carrito');
         let total = 0;
         lista.innerHTML = '';
@@ -178,21 +189,24 @@
     async function procesarCompra() {
         const n = document.getElementById('c_nombre').value;
         const c = document.getElementById('c_celular').value;
-        if(!n || !c) { alert("Completa nombre y celular"); return; }
+        if(!n || !c) return alert("Completa nombre y celular");
+
+        const titulos = carrito.map(i => i.titulo).join(", ");
+        const total = carrito.reduce((a, b) => a + b.precio, 0);
 
         const datos = {
-            libros: carrito.map(i => i.titulo).join(", "),
+            libros: titulos,
             cliente: n,
             celular: c,
             entrega: document.getElementById('c_entrega').value,
             ciudad: document.getElementById('c_ciudad').value || "N/A",
             direccion: document.getElementById('c_direccion').value || "N/A",
-            total: carrito.reduce((a, b) => a + b.precio, 0)
+            total: total
         };
 
         fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(datos) });
 
-        let msg = `📚 *PEDIDO:* ${datos.libros}\n👤 *Cliente:* ${n}\n📱 *Celular:* ${c}\n🚚 *Entrega:* ${datos.entrega}\n💰 *TOTAL:* $${datos.total.toLocaleString('es-CO')}`;
+        let msg = `📚 *NUEVO PEDIDO*\n👤 *Cliente:* ${n}\n📱 *Celular:* ${c}\n📖 *Libros:* ${titulos}\n🚚 *Entrega:* ${datos.entrega}\n💰 *TOTAL:* $${total.toLocaleString('es-CO')}`;
         window.open(`https://wa.me/573174663378?text=${encodeURIComponent(msg)}`);
         
         carrito = [];
