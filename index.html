@@ -36,13 +36,28 @@
             const contenedor = document.getElementById('catalogo');
             contenedor.innerHTML = '';
 
+async function cargarInventario() {
+        try {
+            const respuesta = await fetch(API_URL);
+            const libros = await respuesta.json();
+            const contenedor = document.getElementById('catalogo');
+            contenedor.innerHTML = '';
+
             libros.forEach(libro => {
-                // Solo mostrar si hay stock
+                // FUNCIÓN PARA REPARAR EL ENLACE DE DRIVE
+                let urlImagen = libro.Imagen_URL || 'https://via.placeholder.com/300x400?text=Sin+Foto';
+                
+                if (urlImagen.includes('drive.google.com')) {
+                    // Extrae el ID del archivo y crea el enlace directo
+                    const idDrive = urlImagen.split('/d/')[1].split('/')[0];
+                    urlImagen = `https://lh3.googleusercontent.com/u/0/d/${idDrive}`;
+                }
+
                 if(libro.Stock > 0) {
                     contenedor.innerHTML += `
                     <div class="col-6 col-md-4 col-lg-3">
                         <div class="card h-100 border-0 shadow-sm">
-                            <img src="${libro.Imagen_URL || 'https://via.placeholder.com/150'}" class="card-img-top" alt="${libro.Titulo}">
+                            <img src="${urlImagen}" class="card-img-top" alt="${libro.Titulo}" onerror="this.src='https://via.placeholder.com/300x400?text=Error+Imagen'">
                             <div class="card-body">
                                 <span class="badge bg-secondary mb-2">${libro.Estado}</span>
                                 <h6 class="card-title text-truncate">${libro.Titulo}</h6>
@@ -55,7 +70,7 @@
                 }
             });
         } catch (error) {
-            document.getElementById('catalogo').innerHTML = "<p>Error al cargar el inventario. Por favor intenta más tarde.</p>";
+            console.error("Error cargando inventario:", error);
         }
     }
 
