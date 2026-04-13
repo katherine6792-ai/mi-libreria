@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Librería Local - Libros Nuevos y Usados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-img-top { height: 250px; object-fit: cover; }
+        .precio { color: #2c3e50; font-weight: bold; font-size: 1.4rem; }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark shadow">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1">📚 Mi Librería Local</span>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <h2 class="mb-4">Catálogo Disponible</h2>
+    <div id="catalogo" class="row g-4">
+        <p class="text-center">Consultando disponibilidad en tiempo real...</p>
+    </div>
+</div>
+
+<script>
+    // Tu URL de Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbwoxVK7fB2_qEqay0XKjNSa67y0g_GBCTZbn1oBjtaygEVuSGoUSaDqXc5fZ0hiJXkxnA/exec";
+
+    async function cargarInventario() {
+        try {
+            const respuesta = await fetch(API_URL);
+            const libros = await respuesta.json();
+            const contenedor = document.getElementById('catalogo');
+            contenedor.innerHTML = '';
+
+            libros.forEach(libro => {
+                // Solo mostrar si hay stock
+                if(libro.Stock > 0) {
+                    contenedor.innerHTML += `
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm">
+                            <img src="${libro.Imagen_URL || 'https://via.placeholder.com/150'}" class="card-img-top" alt="${libro.Titulo}">
+                            <div class="card-body">
+                                <span class="badge bg-secondary mb-2">${libro.Estado}</span>
+                                <h6 class="card-title text-truncate">${libro.Titulo}</h6>
+                                <p class="small text-muted">${libro.Autor}</p>
+                                <p class="precio">$${libro.Precio.toLocaleString('es-CO')}</p>
+                                <button class="btn btn-primary w-100" onclick="comprar('${libro.Titulo}', '${libro.Precio}')">Comprar</button>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            });
+        } catch (error) {
+            document.getElementById('catalogo').innerHTML = "<p>Error al cargar el inventario. Por favor intenta más tarde.</p>";
+        }
+    }
+
+    function comprar(titulo, precio) {
+        // Notificación por WhatsApp (Agente Virtual inicial)
+        const telefono = "57XXXXXXXXXX"; // REEMPLAZA CON TU NÚMERO
+        const mensaje = `¡Hola! Me interesa el libro: *${titulo}*. Tiene un valor de $${precio}. ¿Cómo puedo proceder con el pago?`;
+        const urlWa = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+        window.open(urlWa, '_blank');
+    }
+
+    cargarInventario();
+</script>
+</body>
+</html>
