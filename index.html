@@ -61,7 +61,7 @@
 
     function comprar(titulo, precio) {
         // Notificación por WhatsApp (Agente Virtual inicial)
-        const telefono = "57XXXXXXXXXX"; // REEMPLAZA CON TU NÚMERO
+        const telefono = "573174663378"; // REEMPLAZA CON TU NÚMERO
         const mensaje = `¡Hola! Me interesa el libro: *${titulo}*. Tiene un valor de $${precio}. ¿Cómo puedo proceder con el pago?`;
         const urlWa = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
         window.open(urlWa, '_blank');
