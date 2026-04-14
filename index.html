@@ -197,6 +197,38 @@
     }
 
     async function procesarCompra() {
+       <div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-primary shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">💳 Información de Pago</h5>
+      </div>
+      <div class="modal-body text-center">
+        <h6 class="text-muted">Pedido Número:</h6>
+        <h3 id="display-pedido" class="text-primary fw-bold">---</h3>
+        <hr>
+        <p class="mb-1">Por favor realiza la transferencia a:</p>
+        <div class="p-3 bg-light rounded border mb-3">
+            <strong>NEQUI / DAVIPLATA:</strong><br>
+            <span class="h5">3XX XXX XXXX</span><br>
+            <strong>A nombre de:</strong> Tu Nombre
+        </div>
+        <p class="small text-danger">⚠️ IMPORTANTE: Toma una captura o descarga el PDF del soporte.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success w-100 btn-lg" onclick="enviarWhatsAppFinal()">
+            Ya pagué, enviar soporte por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    let nroPedidoGenerado = "";
+    let datosUltimoPedido = {};
+
+    async function procesarCompra() {
         const n = document.getElementById('c_nombre').value;
         const c = document.getElementById('c_celular').value;
         if(!n || !c) return alert("Completa nombre y celular");
@@ -204,7 +236,7 @@
         const titulos = carrito.map(i => i.titulo).join(", ");
         const total = carrito.reduce((a, b) => a + b.precio, 0);
 
-        const datos = {
+        datosUltimoPedido = {
             libros: titulos,
             cliente: n,
             celular: c,
@@ -214,17 +246,36 @@
             total: total
         };
 
-        fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(datos) });
+        // 1. Enviar a Google Sheets y obtener el ID de Pedido
+        try {
+            const response = await fetch(API_URL, { 
+                method: 'POST', 
+                body: JSON.stringify(datosUltimoPedido) 
+            });
+            // Nota: Al usar no-cors no podemos leer la respuesta, 
+            // así que generamos el ID también en el cliente para mostrarlo.
+            nroPedidoGenerado = "LIB-" + Math.floor(Date.now() / 1000);
+            
+            document.getElementById('display-pedido').innerText = nroPedidoGenerado;
+            
+            // Cerrar carrito y abrir modal de pago
+            modalUI.hide();
+            const modalPago = new bootstrap.Modal(document.getElementById('modalPago'));
+            modalPago.show();
 
-        let msg = `📚 *NUEVO PEDIDO*\n👤 *Cliente:* ${n}\n📱 *Celular:* ${c}\n📖 *Libros:* ${titulos}\n🚚 *Entrega:* ${datos.entrega}\n💰 *TOTAL:* $${total.toLocaleString('es-CO')}`;
-        window.open(`https://wa.me/573174663378?text=${encodeURIComponent(msg)}`);
-        
-        carrito = [];
-        document.getElementById('cart-count').innerText = 0;
-        modalUI.hide();
+        } catch(e) {
+            alert("Hubo un error al registrar el pedido. Intenta de nuevo.");
+        }
     }
 
-    cargarInventario();
+    function enviarWhatsAppFinal() {
+        let msg = `👋 ¡Hola! Acabo de realizar el pago.\n\n`;
+        msg += `🆔 *PEDIDO:* ${nroPedidoGenerado}\n`;
+        msg += `👤 *Cliente:* ${datosUltimoPedido.cliente}\n`;
+        msg += `💰 *Valor:* $${datosUltimoPedido.total.toLocaleString('es-CO')}\n\n`;
+        msg += `🖼️ _Adjunto el soporte de pago a continuación..._`;
+
+        window.open(`https://wa.me/573174663378?text=${encodeURIComponent(msg)}`);
+        location.reload(); // Recarga la página para limpiar todo
+    }
 </script>
-</body>
-</html>
