@@ -3,57 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Librería Local - Catálogo</title>
+    <title>Mi Librería Local - Catálogo Profesional</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root { --primary-color: #2c3e50; --accent-color: #e67e22; }
         body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-        
         .navbar { background-color: var(--primary-color) !important; padding: 1.5rem 0; }
-        
         .search-section { background: white; padding: 20px 0; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .search-input { border-radius: 25px; border: 2px solid #eee; padding: 12px 25px; transition: all 0.3s; }
-        .search-input:focus { border-color: var(--accent-color); box-shadow: 0 0 8px rgba(230, 126, 34, 0.2); outline: none; }
-
+        .search-input { border-radius: 25px; border: 2px solid #eee; padding: 12px 25px; }
         .card { border: none; border-radius: 12px; transition: transform 0.2s; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; }
         .card:hover { transform: translateY(-5px); }
         .card-img-top { height: 180px; object-fit: contain; background: #fff; padding: 15px; border-radius: 12px 12px 0 0; }
-        
-        /* Estilo para la etiqueta de Nuevo/Usado */
         .badge-estado { position: absolute; top: 10px; left: 10px; z-index: 10; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
         .badge-nuevo { background-color: #27ae60; color: white; }
         .badge-usado { background-color: #7f8c8d; color: white; }
-
         .precio { color: var(--accent-color); font-weight: bold; font-size: 1.1rem; }
-        
         #floating-cart { position: fixed; bottom: 80px; right: 25px; z-index: 1000; width: 65px; height: 65px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-
         footer { background: #f1f1f1; padding: 20px 0; margin-top: auto; font-size: 0.75rem; color: #666; text-align: center; }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-dark">
-    <div class="container justify-content-center">
+    <div class="container text-center">
         <span class="navbar-brand h1 mb-0">📚 MI LIBRERÍA LOCAL</span>
     </div>
 </nav>
 
 <div class="search-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <input type="text" id="buscador" class="form-control search-input" placeholder="🔍 Buscar por título o autor..." onkeyup="filtrarLibros()">
-            </div>
-        </div>
-    </div>
+    <div class="container"><div class="row justify-content-center"><div class="col-md-6">
+        <input type="text" id="buscador" class="form-control search-input" placeholder="🔍 Buscar por título o autor..." onkeyup="filtrarLibros()">
+    </div></div></div>
 </div>
 
 <div class="container pb-5">
     <div id="catalogo" class="row g-4">
         <div class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2">Actualizando catálogo...</p>
+            <p class="mt-2">Cargando catálogo...</p>
         </div>
     </div>
 </div>
@@ -65,16 +52,10 @@
 <div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Mi Pedido</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
+      <div class="modal-header"><h5>Mi Pedido</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body">
-        <ul id="lista-carrito" class="list-group mb-3"></ul>
-        <div class="d-flex justify-content-between mb-3 px-2">
-            <span class="h5">Total:</span>
-            <span id="total-pedido" class="h4 text-success fw-bold">$0</span>
-        </div>
+        <ul id="lista-carrito" class="list-group mb-3 text-center"></ul>
+        <div class="d-flex justify-content-between mb-3 px-2"><span class="h5">Total:</span><span id="total-pedido" class="h4 text-success fw-bold">$0</span></div>
         <hr>
         <div class="row g-2">
             <div class="col-12"><input type="text" id="c_nombre" class="form-control" placeholder="Nombre completo"></div>
@@ -90,64 +71,75 @@
             <input type="text" id="c_ciudad" class="form-control mb-2" placeholder="Ciudad">
             <input type="text" id="c_direccion" class="form-control" placeholder="Dirección exacta">
         </div>
-        <p class="mt-3 text-muted" style="font-size: 0.65rem;">Al finalizar, autorizas el tratamiento de tus datos para procesar el pedido.</p>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-success w-100 btn-lg" onclick="procesarCompra()">Finalizar por WhatsApp</button>
+      <div class="modal-footer"><button class="btn btn-success w-100 btn-lg" onclick="procesarCompra()">Siguiente: Pago</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white"><h5>💳 Completar Pago</h5></div>
+      <div class="modal-body text-center">
+        <p class="mb-1 text-muted">Número de Pedido:</p>
+        <h4 id="display-pedido" class="fw-bold text-primary">---</h4>
+        <hr>
+        <p>Realiza la transferencia por el total a:</p>
+        <div class="p-3 bg-light rounded border mb-3">
+            <strong>NEQUI / DAVIPLATA:</strong><br><span class="h5">3133878659</span><br>
+            <strong>Nombre:</strong> Tu Librería
+        </div>
+        <p class="small text-danger">⚠️ Descarga el soporte (Captura o PDF) para enviarlo ahora.</p>
       </div>
+      <div class="modal-footer"><button class="btn btn-success w-100" onclick="enviarWhatsAppFinal()">Enviar Soporte por WhatsApp</button></div>
     </div>
   </div>
 </div>
 
 <footer>
     <div class="container">
-        <p class="mb-1">© 2026 Mi Librería Local. Todos los derechos reservados.</p>
-        <p class="px-3">Tratamiento de Datos Personales: De acuerdo con la Ley 1581 de 2012, informamos que los datos suministrados serán tratados únicamente para la gestión de su pedido y comunicación directa entre vendedor y comprador. No compartimos información con terceros.</p>
+        <p class="mb-1">© 2026 Mi Librería Local. Ley 1581 de 2012 - Protección de Datos.</p>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbx_-509Bg6I27bzQjlX96KLNBE7aPj_L_tlnHro76RfRpa8oS-08CaMKGQyFp7Q1YVHLw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwoxVK7fB2_qEqay0XKjNSa67y0g_GBCTZbn1oBjtaygEVuSGoUSaDqXc5fZ0hiJXkxnA/exec"; // REEMPLAZA ESTO
     let TODOS_LOS_LIBROS = [];
     let carrito = [];
+    let nroPedidoGenerado = "";
+    let datosPedidoActual = {};
     const modalUI = new bootstrap.Modal(document.getElementById('modalCarrito'));
+    const modalPago = new bootstrap.Modal(document.getElementById('modalPago'));
 
     async function cargarInventario() {
         try {
-            const respuesta = await fetch(API_URL);
-            TODOS_LOS_LIBROS = await respuesta.json();
+            const res = await fetch(API_URL);
+            TODOS_LOS_LIBROS = await res.json();
             mostrarLibros(TODOS_LOS_LIBROS);
-        } catch (e) {
-            document.getElementById('catalogo').innerHTML = '<p class="text-center">Error al conectar con la base de datos.</p>';
-        }
+        } catch (e) { document.getElementById('catalogo').innerHTML = '<p>Error al cargar.</p>'; }
     }
 
     function mostrarLibros(lista) {
         const contenedor = document.getElementById('catalogo');
         contenedor.innerHTML = '';
-        
         lista.forEach(libro => {
             if(libro.Stock > 0) {
                 let idDrive = "";
                 if (libro.Imagen_URL && libro.Imagen_URL.includes('id=')) idDrive = libro.Imagen_URL.split('id=')[1].split('&')[0];
                 else if (libro.Imagen_URL && libro.Imagen_URL.includes('/d/')) idDrive = libro.Imagen_URL.split('/d/')[1].split('/')[0];
-
-                const urlFinal = idDrive ? `https://lh3.googleusercontent.com/u/0/d/${idDrive}` : 'https://via.placeholder.com/300x400?text=Sin+Foto';
+                const url = idDrive ? "https://lh3.googleusercontent.com/u/0/d/" + idDrive : "https://via.placeholder.com/150";
+                const bClass = libro.Estado.toLowerCase().includes('nuevo') ? 'badge-nuevo' : 'badge-usado';
                 
-                // Determinar clase del badge de estado
-                const estadoLower = libro.Estado.toLowerCase();
-                const badgeClass = estadoLower.includes('nuevo') ? 'badge-nuevo' : 'badge-usado';
-
                 contenedor.innerHTML += `
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card shadow-sm">
-                        <span class="badge-estado ${badgeClass}">${libro.Estado}</span>
-                        <img src="${urlFinal}" class="card-img-top" onerror="this.src='https://via.placeholder.com/150?text=Libro'">
-                        <div class="card-body p-2 d-flex flex-column">
-                            <h6 class="card-title text-truncate mb-1 small fw-bold">${libro.Titulo}</h6>
-                            <p class="text-muted mb-1" style="font-size: 0.75rem;">${libro.Autor}</p>
-                            <p class="precio mb-2">$${Number(libro.Precio).toLocaleString('es-CO')}</p>
+                        <span class="badge-estado ${bClass}">${libro.Estado}</span>
+                        <img src="${url}" class="card-img-top" onerror="this.src='https://via.placeholder.com/150'">
+                        <div class="card-body p-2 d-flex flex-column text-center">
+                            <h6 class="small fw-bold text-truncate">${libro.Titulo}</h6>
+                            <p class="precio mb-2 small">$${Number(libro.Precio).toLocaleString('es-CO')}</p>
                             <button class="btn btn-primary btn-sm mt-auto" onclick="agregarAlCarrito('${libro.Titulo}', ${libro.Precio})">+ Agregar</button>
                         </div>
                     </div>
@@ -157,12 +149,8 @@
     }
 
     function filtrarLibros() {
-        const busqueda = document.getElementById('buscador').value.toLowerCase();
-        const filtrados = TODOS_LOS_LIBROS.filter(l => 
-            l.Titulo.toLowerCase().includes(busqueda) || 
-            l.Autor.toLowerCase().includes(busqueda)
-        );
-        mostrarLibros(filtrados);
+        const b = document.getElementById('buscador').value.toLowerCase();
+        mostrarLibros(TODOS_LOS_LIBROS.filter(l => l.Titulo.toLowerCase().includes(b) || l.Autor.toLowerCase().includes(b)));
     }
 
     function agregarAlCarrito(t, p) {
@@ -171,25 +159,21 @@
     }
 
     function abrirCarrito() {
-        if(carrito.length === 0) return alert("El carrito está vacío");
+        if(!carrito.length) return alert("Carrito vacío");
         const lista = document.getElementById('lista-carrito');
-        let total = 0;
-        lista.innerHTML = '';
-        carrito.forEach((item, index) => {
+        let total = 0; lista.innerHTML = '';
+        carrito.forEach((item, i) => {
             total += item.precio;
-            lista.innerHTML += `<li class="list-group-item d-flex justify-content-between align-items-center py-1 small">
-                ${item.titulo} <span>$${item.precio.toLocaleString('es-CO')}</span>
-                <button class="btn btn-sm text-danger" onclick="eliminarItem(${index})">✕</button>
-            </li>`;
+            lista.innerHTML += `<li class="list-group-item d-flex justify-content-between py-1 small">${item.titulo} <span>$${item.precio.toLocaleString('es-CO')}</span><button class="btn btn-sm text-danger" onclick="eliminar(${i})">✕</button></li>`;
         });
         document.getElementById('total-pedido').innerText = `$${total.toLocaleString('es-CO')}`;
         modalUI.show();
     }
 
-    function eliminarItem(i) {
+    function eliminar(i) {
         carrito.splice(i, 1);
         document.getElementById('cart-count').innerText = carrito.length;
-        if(carrito.length === 0) modalUI.hide(); else abrirCarrito();
+        if(!carrito.length) modalUI.hide(); else abrirCarrito();
     }
 
     function toggleEnvio() {
@@ -197,85 +181,36 @@
     }
 
     async function procesarCompra() {
-       <div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-primary shadow-lg">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title">💳 Información de Pago</h5>
-      </div>
-      <div class="modal-body text-center">
-        <h6 class="text-muted">Pedido Número:</h6>
-        <h3 id="display-pedido" class="text-primary fw-bold">---</h3>
-        <hr>
-        <p class="mb-1">Por favor realiza la transferencia a:</p>
-        <div class="p-3 bg-light rounded border mb-3">
-            <strong>NEQUI / DAVIPLATA:</strong><br>
-            <span class="h5">3XX XXX XXXX</span><br>
-            <strong>A nombre de:</strong> Tu Nombre
-        </div>
-        <p class="small text-danger">⚠️ IMPORTANTE: Toma una captura o descarga el PDF del soporte.</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-success w-100 btn-lg" onclick="enviarWhatsAppFinal()">
-            Ya pagué, enviar soporte por WhatsApp
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-    let nroPedidoGenerado = "";
-    let datosUltimoPedido = {};
-
-    async function procesarCompra() {
         const n = document.getElementById('c_nombre').value;
         const c = document.getElementById('c_celular').value;
-        if(!n || !c) return alert("Completa nombre y celular");
+        if(!n || !c) return alert("Completa tus datos");
 
-        const titulos = carrito.map(i => i.titulo).join(", ");
-        const total = carrito.reduce((a, b) => a + b.precio, 0);
-
-        datosUltimoPedido = {
-            libros: titulos,
-            cliente: n,
-            celular: c,
+        nroPedidoGenerado = "LIB-" + Math.floor(Date.now() / 1000);
+        datosPedidoActual = {
+            id: nroPedidoGenerado,
+            libros: carrito.map(i => i.titulo).join(", "),
+            cliente: n, celular: c,
             entrega: document.getElementById('c_entrega').value,
             ciudad: document.getElementById('c_ciudad').value || "N/A",
             direccion: document.getElementById('c_direccion').value || "N/A",
-            total: total
+            total: carrito.reduce((a, b) => a + b.precio, 0)
         };
 
-        // 1. Enviar a Google Sheets y obtener el ID de Pedido
-        try {
-            const response = await fetch(API_URL, { 
-                method: 'POST', 
-                body: JSON.stringify(datosUltimoPedido) 
-            });
-            // Nota: Al usar no-cors no podemos leer la respuesta, 
-            // así que generamos el ID también en el cliente para mostrarlo.
-            nroPedidoGenerado = "LIB-" + Math.floor(Date.now() / 1000);
-            
-            document.getElementById('display-pedido').innerText = nroPedidoGenerado;
-            
-            // Cerrar carrito y abrir modal de pago
-            modalUI.hide();
-            const modalPago = new bootstrap.Modal(document.getElementById('modalPago'));
-            modalPago.show();
+        // Registrar en Sheets
+        fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(datosPedidoActual) });
 
-        } catch(e) {
-            alert("Hubo un error al registrar el pedido. Intenta de nuevo.");
-        }
+        document.getElementById('display-pedido').innerText = nroPedidoGenerado;
+        modalUI.hide();
+        modalPago.show();
     }
 
     function enviarWhatsAppFinal() {
-        let msg = `👋 ¡Hola! Acabo de realizar el pago.\n\n`;
-        msg += `🆔 *PEDIDO:* ${nroPedidoGenerado}\n`;
-        msg += `👤 *Cliente:* ${datosUltimoPedido.cliente}\n`;
-        msg += `💰 *Valor:* $${datosUltimoPedido.total.toLocaleString('es-CO')}\n\n`;
-        msg += `🖼️ _Adjunto el soporte de pago a continuación..._`;
-
+        const msg = `👋 ¡Hola! Realicé el pago.\n🆔 *PEDIDO:* ${nroPedidoGenerado}\n👤 *Cliente:* ${datosPedidoActual.cliente}\n💰 *Total:* $${datosPedidoActual.total.toLocaleString('es-CO')}\n\n_Adjunto el soporte..._`;
         window.open(`https://wa.me/573174663378?text=${encodeURIComponent(msg)}`);
-        location.reload(); // Recarga la página para limpiar todo
+        location.reload();
     }
+
+    cargarInventario();
 </script>
+</body>
+</html>
