@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📊 Dashboard — Mi Librería Local</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    :root{
+      --cream:#faf6ef;--warm-white:#fff8f0;--ink:#1a1208;
+      --brown:#5c3d1e;--amber:#c8832a;--amber-light:#e8a84a;
+      --sage:#6b7c5c;--rust:#b04a2f;--paper:#f0e8d8;--green:#2d6a4f;
+      --blue:#1a56a0;--purple:#5a3fa0;
+      --shadow:rgba(92,61,30,.13);--shadow-deep:rgba(26,18,8,.22);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E")}
+
+    /* ── LAYOUT ── */
+    .dash-container{position:relative;z-index:1;max-width:1300px;margin:0 auto;padding:1.5rem 2rem 4rem}
+
+    /* ── TOP BAR ── */
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap}
+    .topbar-left{display:flex;align-items:center;gap:1rem}
+    .back-link{display:flex;align-items:center;gap:.4rem;color:var(--brown);text-decoration:none;font-size:.85rem;font-weight:500;background:var(--paper);border:1.5px solid rgba(92,61,30,.15);border-radius:20px;padding:.4rem .9rem;transition:background .2s}
+    .back-link:hover{background:rgba(92,61,30,.1)}
+    .dash-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--brown)}
+    .dash-sub{font-size:.78rem;color:var(--brown);opacity:.6;margin-top:.1rem}
+    .refresh-btn{display:flex;align-items:center;gap:.5rem;background:var(--amber);color:var(--ink);border:none;border-radius:20px;padding:.5rem 1.1rem;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;transition:transform .15s,background .15s}
+    .refresh-btn:hover{background:var(--amber-light);transform:scale(1.04)}
+    .refresh-btn.loading svg{animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .last-updated{font-size:.72rem;color:var(--brown);opacity:.5;text-align:right}
+
+    /* ── KPI GRID ── */
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.2rem;margin-bottom:2rem}
+    .kpi-card{background:var(--warm-white);border-radius:16px;padding:1.3rem 1.5rem;box-shadow:0 2px 12px var(--shadow);border-left:4px solid var(--amber);position:relative;overflow:hidden}
+    .kpi-card::after{content:attr(data-emoji);position:absolute;right:.8rem;top:.6rem;font-size:1.8rem;opacity:.13}
+    .kpi-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--brown);opacity:.6;margin-bottom:.4rem}
+    .kpi-value{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;color:var(--ink);line-height:1}
+    .kpi-sub{font-size:.74rem;color:var(--brown);opacity:.55;margin-top:.3rem}
+    .kpi-card.accent-green{border-left-color:var(--green)}
+    .kpi-card.accent-rust{border-left-color:var(--rust)}
+    .kpi-card.accent-blue{border-left-color:var(--blue)}
+    .kpi-card.accent-purple{border-left-color:var(--purple)}
+
+    /* ── SECCIÓN ── */
+    .section{background:var(--warm-white);border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px var(--shadow);margin-bottom:1.5rem}
+    .section-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--brown);margin-bottom:1.2rem;display:flex;align-items:center;gap:.5rem}
+    .section-title span{font-size:1rem}
+
+    /* GRID 2 columnas */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+
+    /* ── TABLA ── */
+    .data-table{width:100%;border-collapse:collapse;font-size:.83rem}
+    .data-table th{background:var(--paper);color:var(--brown);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;padding:.6rem .9rem;text-align:left;border-bottom:2px solid var(--amber)}
+    .data-table td{padding:.65rem .9rem;border-bottom:1px solid rgba(92,61,30,.08);vertical-align:middle}
+    .data-table tr:hover td{background:rgba(200,131,42,.04)}
+    .data-table tr:last-child td{border-bottom:none}
+    .badge-estado{display:inline-block;font-size:.65rem;font-weight:700;padding:.18rem .55rem;border-radius:20px;text-transform:uppercase;letter-spacing:.06em}
+    .badge-pendiente{background:rgba(200,131,42,.15);color:#8a5500}
+    .badge-pagado   {background:rgba(45,106,79,.15); color:var(--green)}
+    .badge-enviado  {background:rgba(26,86,160,.15); color:var(--blue)}
+    .badge-cancelado{background:rgba(176,74,47,.15); color:var(--rust)}
+
+    /* ── STOCK BARS ── */
+    .stock-bar-wrap{display:flex;align-items:center;gap:.6rem;font-size:.8rem}
+    .stock-bar{flex:1;height:8px;background:rgba(92,61,30,.1);border-radius:4px;overflow:hidden}
+    .stock-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+    .stock-bar-fill.ok{background:var(--green)}
+    .stock-bar-fill.low{background:var(--amber)}
+    .stock-bar-fill.out{background:var(--rust)}
+
+    /* ── ENTREGA DONUT ── */
+    .donut-wrap{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+    .donut-legend{display:flex;flex-direction:column;gap:.5rem;font-size:.82rem}
+    .legend-item{display:flex;align-items:center;gap:.5rem}
+    .legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+    /* ── LOADER ── */
+    .dash-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;color:var(--brown);opacity:.5;grid-column:1/-1}
+    .dash-loading-spinner{font-size:2.5rem;margin-bottom:.5rem;animation:spin 2s linear infinite}
+
+    /* ── ALERTA STOCK ── */
+    .alert-box{background:rgba(176,74,47,.07);border:1.5px solid rgba(176,74,47,.25);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1rem;font-size:.82rem;display:flex;align-items:flex-start;gap:.6rem;color:var(--rust)}
+    .alert-box.info{background:rgba(200,131,42,.07);border-color:rgba(200,131,42,.3);color:#8a5500}
+
+    /* ── EMPTY STATE ── */
+    .empty-state{text-align:center;padding:3rem 1rem;color:var(--brown);opacity:.45;font-size:.9rem}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:700px){
+      .two-col{grid-template-columns:1fr}
+      .dash-container{padding:1rem 1rem 3rem}
+      .kpi-value{font-size:1.5rem}
+    }
+  </style>
+</head>
+<body>
+
+<div class="dash-container">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a class="back-link" href="index.html">← Tienda</a>
+      <div>
+        <div class="dash-title">📊 Dashboard</div>
+        <div class="dash-sub">Mi Librería Local — Panel de control</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.3rem">
+      <button class="refresh-btn" id="refreshBtn" onclick="loadAll()">
+        <svg id="refreshIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        Actualizar datos
+      </button>
+      <div class="last-updated" id="lastUpdated">—</div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="kpi-card" data-emoji="📦"><div class="kpi-label">Pedidos totales</div><div class="kpi-value" id="kpiPedidos">—</div><div class="kpi-sub" id="kpiPedidosSub">cargando…</div></div>
+    <div class="kpi-card accent-green" data-emoji="💰"><div class="kpi-label">Ingresos totales</div><div class="kpi-value" id="kpiIngresos">—</div><div class="kpi-sub" id="kpiIngresosSub">cargando…</div></div>
+    <div class="kpi-card accent-rust" data-emoji="📚"><div class="kpi-label">Libros en stock</div><div class="kpi-value" id="kpiStock">—</div><div class="kpi-sub" id="kpiStockSub">cargando…</div></div>
+    <div class="kpi-card accent-blue" data-emoji="🚚"><div class="kpi-label">Pedidos envío</div><div class="kpi-value" id="kpiEnvio">—</div><div class="kpi-sub" id="kpiEnvioSub">cargando…</div></div>
+    <div class="kpi-card accent-purple" data-emoji="🛒"><div class="kpi-label">Ticket promedio</div><div class="kpi-value" id="kpiTicket">—</div><div class="kpi-sub" id="kpiTicketSub">cargando…</div></div>
+  </div>
+
+  <!-- ALERTAS -->
+  <div id="alertsZone"></div>
+
+  <!-- PEDIDOS RECIENTES + GRÁFICA VENTAS -->
+  <div class="two-col">
+    <!-- Ventas por día -->
+    <div class="section">
+      <div class="section-title"><span>📈</span> Ventas por día (últimos 14 días)</div>
+      <div style="position:relative;height:220px">
+        <canvas id="chartVentas" role="img" aria-label="Gráfica de ventas diarias">Ventas diarias de los últimos 14 días.</canvas>
+      </div>
+    </div>
+    <!-- Tipo de entrega -->
+    <div class="section">
+      <div class="section-title"><span>🚚</span> Tipo de entrega</div>
+      <div class="donut-wrap">
+        <div style="position:relative;width:140px;height:140px;flex-shrink:0">
+          <canvas id="chartEntrega" role="img" aria-label="Distribución de tipos de entrega">Distribución de pedidos por tipo de entrega.</canvas>
+        </div>
+        <div class="donut-legend" id="entregaLegend"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTARIO + TOP VENTAS -->
+  <div class="two-col">
+    <!-- Top 10 libros vendidos -->
+    <div class="section">
+      <div class="section-title"><span>🏆</span> Top libros vendidos</div>
+      <div id="topVendidos"><div class="empty-state">Cargando…</div></div>
+    </div>
+    <!-- Stock crítico -->
+    <div class="section">
+      <div class="section-title"><span>⚠️</span> Stock del inventario</div>
+      <div id="stockZone"><div class="empty-state">Cargando…</div></div>
+    </div>
+  </div>
+
+  <!-- TABLA PEDIDOS RECIENTES -->
+  <div class="section">
+    <div class="section-title" style="justify-content:space-between">
+      <span style="display:flex;align-items:center;gap:.5rem"><span>📋</span> Pedidos recientes</span>
+      <span style="font-size:.75rem;color:var(--brown);opacity:.5" id="pedidosCount"></span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>N° Pedido</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Libros</th>
+            <th>Entrega</th>
+            <th>Total</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="pedidosBody">
+          <tr><td colspan="7" class="empty-state" style="text-align:center;padding:2rem">Cargando pedidos…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /dash-container -->
+
+<script>
+// ══════════════════════════════════════════════════════
+//  CONFIG — usa la misma URL del Apps Script
+// ══════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-yfrd9AM6CBmpubYJkcgd8OFNHvW51Apf3LxfvCUCPpAFE3ww3KJX3gGQlX50hJha1A/exec';
+
+let chartVentas  = null;
+let chartEntrega = null;
+
+// ══════════════════════════════════════════════════════
+//  CARGA PRINCIPAL
+// ══════════════════════════════════════════════════════
+async function loadAll() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  try {
+    const [inventario, ventas] = await Promise.all([
+      fetchInventario(),
+      fetchVentas(),
+    ]);
+    renderKPIs(inventario, ventas);
+    renderAlertas(inventario);
+    renderChartVentas(ventas);
+    renderChartEntrega(ventas);
+    renderTopVendidos(inventario);
+    renderStock(inventario);
+    renderPedidos(ventas);
+    document.getElementById('lastUpdated').textContent =
+      'Actualizado: ' + new Date().toLocaleTimeString('es-CO');
+  } catch(err) {
+    console.error('Dashboard error:', err);
+    showError('No se pudo cargar la información. Revisa la conexión con el Apps Script.');
+  }
+  btn.classList.remove('loading');
+  btn.disabled = false;
+}
+
+// ══════════════════════════════════════════════════════
+//  FETCH INVENTARIO (doGet)
+// ══════════════════════════════════════════════════════
+async function fetchInventario() {
+  const res  = await fetch(APPS_SCRIPT_URL + '?t=' + Date.now());
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return json.filter(r => r['Titulo'] && String(r['Titulo']).trim());
+}
+
+// ══════════════════════════════════════════════════════
+//  FETCH VENTAS (doGet con action=ventas)
+// ══════════════════════════════════════════════════════
+async function fetchVentas() {
+  const res  = await fetch(APPS_SCRIPT_URL + '?action=ventas&t=' + Date.now());
+  const json = await res.json();
+  if (json.error) throw new Error(json.error);
+  return Array.isArray(json) ? json : [];
+}
+
+// ══════════════════════════════════════════════════════
+//  KPIs
+// ══════════════════════════════════════════════════════
+function renderKPIs(inv, ventas) {
+  const totalPedidos    = ventas.length;
+  const ingresoTotal    = ventas.reduce((s, v) => s + (parseNum(v['Total']) || 0), 0);
+  const totalStock      = inv.reduce((s, r) => s + (parseInt(r['Stock Final']) || 0), 0);
+  const pedidosEnvio    = ventas.filter(v => String(v['Entrega'] || '').includes('envío') || String(v['Entrega']||'').includes('envio')).length;
+  const ticketPromedio  = totalPedidos > 0 ? ingresoTotal / totalPedidos : 0;
+
+  // Pedidos este mes
+  const hoy    = new Date();
+  const mesAct = ventas.filter(v => {
+    const d = new Date(v['Fecha']);
+    return !isNaN(d) && d.getMonth()===hoy.getMonth() && d.getFullYear()===hoy.getFullYear();
+  }).length;
+
+  setText('kpiPedidos', totalPedidos);
+  setText('kpiPedidosSub', `${mesAct} este mes`);
+  setText('kpiIngresos', formatCOP(ingresoTotal));
+  const ingMes = ventas.filter(v=>{
+    const d=new Date(v['Fecha']); return !isNaN(d)&&d.getMonth()===hoy.getMonth()&&d.getFullYear()===hoy.getFullYear();
+  }).reduce((s,v)=>s+(parseNum(v['Total'])||0),0);
+  setText('kpiIngresosSub', `${formatCOP(ingMes)} este mes`);
+  setText('kpiStock', totalStock);
+  const agotados = inv.filter(r => (parseInt(r['Stock Final'])||0) <= 0).length;
+  setText('kpiStockSub', `${agotados} agotado${agotados!==1?'s':''}`);
+  setText('kpiEnvio', pedidosEnvio);
+  const pctEnvio = totalPedidos>0 ? Math.round(pedidosEnvio/totalPedidos*100) : 0;
+  setText('kpiEnvioSub', `${pctEnvio}% del total`);
+  setText('kpiTicket', formatCOP(Math.round(ticketPromedio)));
+  setText('kpiTicketSub', 'por pedido');
+}
+
+// ══════════════════════════════════════════════════════
+//  ALERTAS
+// ══════════════════════════════════════════════════════
+function renderAlertas(inv) {
+  const zone      = document.getElementById('alertsZone');
+  const agotados  = inv.filter(r=>(parseInt(r['Stock Final'])||0)<=0);
+  const criticos  = inv.filter(r=>(parseInt(r['Stock Final'])||0)===1);
+  let html = '';
+  if (agotados.length)
+    html += `<div class="alert-box">⚠️ <strong>${agotados.length} libro${agotados.length!==1?'s':''} agotado${agotados.length!==1?'s':''}:</strong> ${agotados.map(r=>r['Titulo']).join(', ')}</div>`;
+  if (criticos.length)
+    html += `<div class="alert-box info">📢 <strong>${criticos.length} libro${criticos.length!==1?'s':''} con solo 1 unidad:</strong> ${criticos.map(r=>r['Titulo']).join(', ')}</div>`;
+  zone.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════
+//  GRÁFICA VENTAS DIARIAS
+// ══════════════════════════════════════════════════════
+function renderChartVentas(ventas) {
+  // Últimos 14 días
+  const dias = [];
+  for (let i=13; i>=0; i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    dias.push(d.toISOString().split('T')[0]);
+  }
+  const counts = dias.map(day =>
+    ventas.filter(v => {
+      const d = new Date(v['Fecha']);
+      return !isNaN(d) && d.toISOString().split('T')[0] === day;
+    }).length
+  );
+  const labels = dias.map(d => {
+    const [,m,dia] = d.split('-');
+    return `${parseInt(dia)}/${parseInt(m)}`;
+  });
+
+  if (chartVentas) { chartVentas.destroy(); chartVentas = null; }
+  chartVentas = new Chart(document.getElementById('chartVentas'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Pedidos',
+        data: counts,
+        backgroundColor: '#c8832a',
+        borderRadius: 6,
+        borderSkipped: false,
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#5c3d1e', font: { size: 11 }, maxRotation: 45 } },
+        y: { beginAtZero: true, ticks: { stepSize: 1, color: '#5c3d1e', font: { size: 11 } }, grid: { color: 'rgba(92,61,30,.08)' } },
+      },
+    },
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  GRÁFICA TIPO ENTREGA (donut)
+// ══════════════════════════════════════════════════════
+function renderChartEntrega(ventas) {
+  const recojo = ventas.filter(v => !String(v['Entrega']||'').toLowerCase().includes('envío') && !String(v['Entrega']||'').toLowerCase().includes('envio')).length;
+  const envio  = ventas.length - recojo;
+  const total  = ventas.length;
+
+  document.getElementById('entregaLegend').innerHTML = [
+    {label:`Recojo en tienda (${total>0?Math.round(recojo/total*100):0}%)`, color:'#5c3d1e', count:recojo},
+    {label:`Envío a domicilio (${total>0?Math.round(envio/total*100):0}%)`,  color:'#c8832a', count:envio},
+  ].map(i=>`
+    <div class="legend-item">
+      <span class="legend-dot" style="background:${i.color}"></span>
+      <span>${i.label} — <strong>${i.count}</strong></span>
+    </div>`).join('');
+
+  if (chartEntrega) { chartEntrega.destroy(); chartEntrega = null; }
+  chartEntrega = new Chart(document.getElementById('chartEntrega'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Recojo en tienda', 'Envío'],
+      datasets: [{ data: [recojo, envio], backgroundColor: ['#5c3d1e','#c8832a'], borderWidth: 3, borderColor: '#fff8f0' }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: { legend: { display: false } },
+    },
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  TOP LIBROS VENDIDOS
+// ══════════════════════════════════════════════════════
+function renderTopVendidos(inv) {
+  const sorted = [...inv]
+    .map(r => ({ titulo: r['Titulo'], ventas: parseInt(r['Ventas']) || 0, estado: r['Estado'] || '' }))
+    .filter(r => r.ventas > 0)
+    .sort((a, b) => b.ventas - a.ventas)
+    .slice(0, 10);
+
+  if (!sorted.length) {
+    document.getElementById('topVendidos').innerHTML = '<div class="empty-state">No hay ventas registradas aún</div>';
+    return;
+  }
+
+  const maxVentas = sorted[0].ventas;
+  document.getElementById('topVendidos').innerHTML = sorted.map((r, i) => `
+    <div style="margin-bottom:.75rem">
+      <div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:.25rem">
+        <span style="font-weight:500">${i+1}. ${esc(r.titulo)}</span>
+        <span style="font-weight:700;color:var(--brown)">${r.ventas} vend.</span>
+      </div>
+      <div class="stock-bar">
+        <div class="stock-bar-fill ok" style="width:${Math.round(r.ventas/maxVentas*100)}%;background:var(--amber)"></div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  STOCK INVENTARIO
+// ══════════════════════════════════════════════════════
+function renderStock(inv) {
+  const items = [...inv]
+    .map(r => ({
+      titulo: r['Titulo'],
+      stock:  parseInt(r['Stock Final']) || 0,
+      ini:    parseInt(r['Stock Inicial']) || parseInt(r['Stock Final']) || 1,
+    }))
+    .sort((a, b) => a.stock - b.stock)
+    .slice(0, 12);
+
+  if (!items.length) {
+    document.getElementById('stockZone').innerHTML = '<div class="empty-state">Sin datos de inventario</div>';
+    return;
+  }
+
+  document.getElementById('stockZone').innerHTML = items.map(r => {
+    const pct   = r.ini > 0 ? Math.round(Math.max(0, r.stock) / r.ini * 100) : 0;
+    const cls   = r.stock <= 0 ? 'out' : r.stock <= 2 ? 'low' : 'ok';
+    const color = r.stock <= 0 ? 'var(--rust)' : r.stock <= 2 ? 'var(--amber)' : 'var(--green)';
+    return `
+    <div style="margin-bottom:.6rem">
+      <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.22rem">
+        <span style="font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.titulo)}">${esc(r.titulo)}</span>
+        <span style="font-weight:700;color:${color};margin-left:.5rem;flex-shrink:0">${r.stock} ud.</span>
+      </div>
+      <div class="stock-bar"><div class="stock-bar-fill ${cls}" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  TABLA PEDIDOS RECIENTES
+// ══════════════════════════════════════════════════════
+function renderPedidos(ventas) {
+  document.getElementById('pedidosCount').textContent = `${ventas.length} pedido${ventas.length!==1?'s':''}`;
+  const sorted = [...ventas].sort((a, b) => new Date(b['Fecha']) - new Date(a['Fecha'])).slice(0, 50);
+
+  if (!sorted.length) {
+    document.getElementById('pedidosBody').innerHTML =
+      '<tr><td colspan="7" class="empty-state" style="text-align:center;padding:2rem">No hay pedidos aún</td></tr>';
+    return;
+  }
+
+  document.getElementById('pedidosBody').innerHTML = sorted.map(v => {
+    const estado  = String(v['Estado Pago'] || 'Pendiente Pago');
+    const clsMap  = {
+      'Pendiente Pago':'badge-pendiente','Pagado':'badge-pagado',
+      'Enviado':'badge-enviado','Cancelado':'badge-cancelado',
+    };
+    const cls     = clsMap[estado] || 'badge-pendiente';
+    const fecha   = formatFecha(v['Fecha']);
+    const entrega = String(v['Entrega']||'').includes('envío')||String(v['Entrega']||'').includes('envio')
+      ? '🚚 Envío' : '🏪 Tienda';
+    const libros  = truncar(String(v['Libros'] || '—'), 50);
+    return `
+    <tr>
+      <td style="font-weight:600;color:var(--brown);white-space:nowrap">${esc(v['N° Pedido']||'—')}</td>
+      <td style="white-space:nowrap;font-size:.78rem;color:var(--ink);opacity:.7">${fecha}</td>
+      <td><div style="font-size:.82rem;font-weight:500">${esc(v['Cliente']||'—')}</div><div style="font-size:.72rem;opacity:.55">${esc(v['Celular']||'')}</div></td>
+      <td style="font-size:.78rem;max-width:200px" title="${esc(String(v['Libros']||''))}">${esc(libros)}</td>
+      <td style="font-size:.78rem;white-space:nowrap">${entrega}</td>
+      <td style="font-family:'Playfair Display',serif;font-weight:700;color:var(--brown);white-space:nowrap">${formatCOP(parseNum(v['Total']))}</td>
+      <td><span class="badge-estado ${cls}">${esc(estado)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════
+function formatCOP(n) { return '$' + Math.round(n||0).toLocaleString('es-CO'); }
+function parseNum(v) { return parseFloat(String(v||0).replace(/[^0-9.,]/g,'').replace(',','.'))||0; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function setText(id, val) { const el=document.getElementById(id); if(el) el.textContent=String(val); }
+function truncar(s, n) { return s.length > n ? s.slice(0,n)+'…' : s; }
+function formatFecha(raw) {
+  if (!raw) return '—';
+  const d = new Date(raw);
+  if (isNaN(d)) return String(raw).slice(0,10);
+  return d.toLocaleString('es-CO',{dateStyle:'short',timeStyle:'short'});
+}
+function showError(msg) {
+  document.getElementById('alertsZone').innerHTML =
+    `<div class="alert-box">❌ ${esc(msg)}</div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════
+loadAll();
+</script>
+</body>
+</html>
