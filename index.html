@@ -161,20 +161,6 @@
     .wa-btn:disabled { opacity:.6; cursor:not-allowed; }
     .modal-status { text-align:center; font-size:.78rem; margin-top:.75rem; min-height:1.2em; }
 
-    /* ── TOAST ── */
-    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(--brown); color:var(--cream); padding:.72rem 1.4rem; border-radius:30px; font-size:.86rem; font-weight:500; z-index:400; transition:transform .3s cubic-bezier(.4,0,.2,1); max-width:90vw; text-align:center; box-shadow:0 8px 24px var(--shadow-deep); }
-    .toast.show { transform:translateX(-50%) translateY(0); }
-    .toast.warn    { background:var(--rust); }
-    .toast.success { background:var(--green); }
-
-    /* ── LOADING ── */
-    .loading { text-align:center; padding:4rem 2rem; color:var(--brown); grid-column:1/-1; }
-    .loading-spinner { font-size:2.5rem; display:block; animation:spin 2s linear infinite; margin-bottom:.5rem; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-
-    /* ── FOOTER ── */
-    footer { background:var(--brown); color:rgba(250,246,239,.65); text-align:center; padding:2rem; font-size:.8rem; margin-top:4rem; }
-    footer strong { color:var(--cream); }
 
     /* ── MODAL STEPS ── */
     .modal-step { display:none; }
@@ -195,8 +181,6 @@
     .form-input.error { border-color:var(--rust); }
     .field-error { font-size:.71rem; color:var(--rust); margin-top:.25rem; display:none; }
     .field-error.show { display:block; }
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
-    .envio-fields { margin-top:.2rem; }
 
     /* ── DELIVERY INFO BOXES ── */
     .deli-box { border-radius:14px; padding:.9rem 1.1rem; margin-bottom:1.1rem; }
@@ -215,6 +199,21 @@
     .btn-next { flex:1; background:linear-gradient(135deg,var(--amber),var(--amber-light)); color:var(--ink); border:none; border-radius:30px; padding:.8rem; font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:700; cursor:pointer; transition:transform .15s,box-shadow .15s; }
     .btn-next:hover { transform:translateY(-2px); box-shadow:0 5px 18px rgba(200,131,42,.35); }
 
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(--brown); color:var(--cream); padding:.72rem 1.4rem; border-radius:30px; font-size:.86rem; font-weight:500; z-index:400; transition:transform .3s cubic-bezier(.4,0,.2,1); max-width:90vw; text-align:center; box-shadow:0 8px 24px var(--shadow-deep); }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+    .toast.warn    { background:var(--rust); }
+    .toast.success { background:var(--green); }
+
+    /* ── LOADING ── */
+    .loading { text-align:center; padding:4rem 2rem; color:var(--brown); grid-column:1/-1; }
+    .loading-spinner { font-size:2.5rem; display:block; animation:spin 2s linear infinite; margin-bottom:.5rem; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── FOOTER ── */
+    footer { background:var(--brown); color:rgba(250,246,239,.65); text-align:center; padding:2rem; font-size:.8rem; margin-top:4rem; }
+    footer strong { color:var(--cream); }
+
     /* ── RESPONSIVE ── */
     @media (max-width:640px) {
       .search-bar { display:none; }
@@ -222,7 +221,6 @@
       .hero-mascot { width:140px; }
       .books-grid { grid-template-columns:repeat(2,1fr); gap:1rem; }
       .catalog-section, .filters-bar { padding:0 1rem; }
-      .form-row { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -252,7 +250,7 @@
 
 <!-- ══════ MISSION BAND ══════ -->
 <div class="mission-band">
-  🐾 Somos una librería con corazón: parte de cada venta apoya el bienestar de animales en nuestra comunidad. 🐱🐶
+  🐾 Somos una librería con corazón. 🐱🐶
 </div>
 
 <!-- ══════ HERO ══════ -->
@@ -261,11 +259,10 @@
   <div class="hero-content">
     <div class="hero-tag">✨ Inventario en tiempo real</div>
     <h1>Encuentra tu próximo<br/><em>libro favorito</em></h1>
-    <p>Libros nuevos y usados, escogidos con amor. Recoge en tienda o pide envío. Parte de cada compra apoya a los animales 🐾</p>
+    <p>Libros nuevos y usados, escogidos con amor.🐾</p>
     <div class="hero-badges">
       <span class="badge">📦 Envío disponible</span>
       <span class="badge">💚 Nequi · Daviplata</span>
-      <span class="badge">🐾 Apoya animales</span>
       <span class="badge" id="heroBadgeBooks">📚 Cargando…</span>
     </div>
   </div>
@@ -315,6 +312,7 @@
     </button>
   </div>
 </div>
+
 <!-- ══════ PAYMENT MODAL (3 pasos) ══════ -->
 <div class="modal-overlay" id="paymentModal">
   <div class="modal">
@@ -325,7 +323,6 @@
     </div>
     <div class="modal-body">
 
-      <!-- Indicador de pasos -->
       <div class="step-indicator">
         <div class="step-dot active" id="dot1">1</div>
         <div class="step-line" id="line1"></div>
@@ -334,7 +331,7 @@
         <div class="step-dot" id="dot3">3</div>
       </div>
 
-      <!-- ══ PASO 1: Resumen + info entrega ══ -->
+      <!-- PASO 1: Resumen + info entrega -->
       <div class="modal-step active" id="step1">
         <div class="order-summary">
           <h3>📋 Resumen del pedido</h3>
@@ -343,25 +340,22 @@
             <span>Total libros</span><span id="modalTotal">$0</span>
           </div>
         </div>
-
         <div class="deli-box recojo" id="infoRecojo">
           <div class="deli-box-title">🏪 Recojo en tienda — ¡Gratis!</div>
           <p>Puedes pasar a recoger tu pedido directamente en nuestra tienda, sin ningún costo adicional.</p>
-          <p>Te contactaremos por WhatsApp para confirmar el horario de entrega una vez recibamos el pago.</p>
+          <p>Te contactaremos por WhatsApp para confirmar el horario una vez recibamos el pago.</p>
         </div>
-
         <div class="deli-box envio" id="infoEnvio" style="display:none">
           <div class="deli-box-title">🚚 Envío a domicilio</div>
           <p><strong>El valor de los libros se paga antes</strong> por Nequi o Daviplata al 313 387 8659.</p>
-          <p>El <strong>costo del envío se paga aparte, contraentrega</strong> directamente al mensajero. El valor varía según tu ciudad y te lo confirmamos por WhatsApp.</p>
+          <p>El <strong>costo del envío se paga aparte, contraentrega</strong> al mensajero. El valor varía según tu ciudad y te lo confirmamos por WhatsApp.</p>
         </div>
-
         <div class="step-btns">
           <button class="btn-next" onclick="goStep(2)">Continuar → Mis datos</button>
         </div>
       </div>
 
-      <!-- ══ PASO 2: Datos del cliente ══ -->
+      <!-- PASO 2: Datos del cliente -->
       <div class="modal-step" id="step2">
         <div class="form-group">
           <label class="form-label">Nombre completo <span class="req">*</span></label>
@@ -373,7 +367,7 @@
           <input class="form-input" id="fCelular" type="tel" placeholder="300 000 0000"/>
           <div class="field-error" id="errCelular">Ingresa un celular válido (10 dígitos)</div>
         </div>
-        <div class="envio-fields" id="envioFields" style="display:none">
+        <div id="envioFields" style="display:none">
           <div class="form-group">
             <label class="form-label">Ciudad de envío <span class="req">*</span></label>
             <input class="form-input" id="fCiudad" type="text" placeholder="Ej: Bogotá, Medellín, Cali…"/>
@@ -391,7 +385,7 @@
         </div>
       </div>
 
-      <!-- ══ PASO 3: Pago ══ -->
+      <!-- PASO 3: Pago -->
       <div class="modal-step" id="step3">
         <div class="order-summary" style="margin-bottom:1rem">
           <h3>✅ Resumen final</h3>
@@ -403,7 +397,6 @@
           <div style="font-size:.8rem;color:var(--ink);margin-top:.4rem;line-height:1.6" id="modalClienteFinal"></div>
           <div id="orderNumero" style="display:none;margin-top:.5rem;font-size:.8rem;color:var(--green);font-weight:700;background:rgba(45,106,79,.08);border-radius:8px;padding:.35rem .7rem;"></div>
         </div>
-
         <div class="payment-info">
           <div class="payment-title">Transferir a:</div>
           <div class="payment-methods">
@@ -420,7 +413,6 @@
           </div>
           <div class="warning-box">⚠️ <span>Descarga el soporte (captura o PDF) antes de enviarlo por WhatsApp.</span></div>
         </div>
-
         <button class="wa-btn" id="waBtn" onclick="sendWhatsApp()">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
           Enviar soporte por WhatsApp
@@ -450,7 +442,8 @@
 // ╔══════════════════════════════════════════════════════════════╗
 // ║  CONFIGURACIÓN — pega aquí la URL del Apps Script           ║
 // ╚══════════════════════════════════════════════════════════════╝
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-yfrd9AM6CBmpubYJkcgd8OFNHvW51Apf3LxfvCUCPpAFE3ww3KJX3gGQ1X50hJha1A/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-yfrd9AM6CBmpubYJkcgd8OFNHvW51Apf3LxfvCUCPpAFE3ww3KJX3gGQlX50hJha1A/exec';
+// Ejemplo: ''
 
 const WA_NUMBER = '573108752553';
 
@@ -627,7 +620,6 @@ function renderBooks() {
       </div>
     </div>`;
   }).join('');
-  requestAnimationFrame(applyOrientationFix); // fix rotación celular
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -726,68 +718,46 @@ function setDelivery(mode) {
 // ╔══════════════════════════════════════════════════════════════╗
 // ║  MODAL — navegación por pasos                               ║
 // ╚══════════════════════════════════════════════════════════════╝
-let pedidoActual  = '';
-let pedidoYaEnviado = false; // ← FIX punto 4: evita doble registro
+let pedidoYaEnviado = false;
 
 const STEP_TITLES = [
   null,
-  { h: '📋 Tu pedido',   p: 'Revisa los libros seleccionados' },
-  { h: '👤 Tus datos',   p: 'Necesitamos saber a quién contactar' },
-  { h: '💳 Pagar',       p: 'Realiza la transferencia y envía el soporte' },
+  { h: '📋 Tu pedido',  p: 'Revisa los libros seleccionados' },
+  { h: '👤 Tus datos',  p: 'Necesitamos saber a quién contactar' },
+  { h: '💳 Pagar',      p: 'Realiza la transferencia y envía el soporte' },
 ];
 
 function goStep(n) {
-  // Validar formulario antes de pasar al paso 3
   if (n === 3 && !validateForm()) return;
-
-  // Actualizar step-dots y lines
   [1,2,3].forEach(i => {
-    const dot  = document.getElementById('dot' + i);
+    const dot  = document.getElementById('dot'  + i);
     const line = document.getElementById('line' + i);
     dot.classList.remove('active','done');
-    if (i < n)       { dot.classList.add('done');   }
-    else if (i === n){ dot.classList.add('active');  }
+    if (i < n)        dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
     if (line) line.classList.toggle('done', i < n);
-  });
-
-  // Mostrar/ocultar pasos
-  [1,2,3].forEach(i => {
     document.getElementById('step' + i).classList.toggle('active', i === n);
   });
-
-  // Actualizar cabecera del modal
   const t = STEP_TITLES[n];
   document.getElementById('modalHeadTitle').textContent = t.h;
   document.getElementById('modalHeadSub').textContent   = t.p;
-
-  // Al llegar al paso 3: poblar resumen final
   if (n === 3) populateFinalStep();
 }
 
 function openPayment() {
   pedidoActual    = '';
   pedidoYaEnviado = false;
-
   const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
   document.getElementById('modalTotal').textContent = formatPrice(total);
   document.getElementById('orderLines').innerHTML   = cart.map(i =>
-    `<div class="order-line">
-       <span>${i.emoji} ${esc(i.title)} ×${i.qty} ${i.estado ? '(' + esc(i.estado) + ')' : ''}</span>
-       <span>${formatPrice(i.price * i.qty)}</span>
-     </div>`
+    '<div class="order-line"><span>' + i.emoji + ' ' + esc(i.title) + ' ×' + i.qty + (i.estado ? ' (' + esc(i.estado) + ')' : '') + '</span><span>' + formatPrice(i.price * i.qty) + '</span></div>'
   ).join('');
-
-  // Mostrar/ocultar info de entrega
-  document.getElementById('infoRecojo').style.display = deliveryMode === 'recojo' ? '' : 'none';
-  document.getElementById('infoEnvio').style.display  = deliveryMode === 'envio'  ? '' : 'none';
-  document.getElementById('envioFields').style.display = deliveryMode === 'envio' ? '' : 'none';
-
-  // Reset estado
-  document.getElementById('modalStatus').textContent = '';
-  document.getElementById('waBtn').disabled = false;
+  document.getElementById('infoRecojo').style.display  = deliveryMode === 'recojo' ? '' : 'none';
+  document.getElementById('infoEnvio').style.display   = deliveryMode === 'envio'  ? '' : 'none';
+  document.getElementById('envioFields').style.display = deliveryMode === 'envio'  ? '' : 'none';
+  document.getElementById('modalStatus').textContent   = '';
+  document.getElementById('waBtn').disabled            = false;
   document.getElementById('orderNumero').style.display = 'none';
-
-  // Ir al paso 1
   goStep(1);
   document.getElementById('paymentModal').classList.add('open');
 }
@@ -797,85 +767,55 @@ function closePayment() {
 }
 
 function populateFinalStep() {
-  const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const delivery = deliveryMode === 'envio' ? '🚚 Solicitar envío — Envío contraentrega' : '🏪 Recojo en tienda — Gratis';
-  const nombre   = document.getElementById('fNombre').value.trim();
-  const celular  = document.getElementById('fCelular').value.trim();
-  const ciudad   = document.getElementById('fCiudad')   ? document.getElementById('fCiudad').value.trim()    : '';
-  const direccion= document.getElementById('fDireccion') ? document.getElementById('fDireccion').value.trim() : '';
-
-  document.getElementById('modalTotalFinal').textContent  = formatPrice(total);
+  const total     = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery  = deliveryMode === 'envio' ? '🚚 Envío — pago contraentrega' : '🏪 Recojo en tienda — Gratis';
+  const nombre    = document.getElementById('fNombre').value.trim();
+  const celular   = document.getElementById('fCelular').value.trim();
+  const ciudad    = deliveryMode === 'envio' ? document.getElementById('fCiudad').value.trim()    : '';
+  const direccion = deliveryMode === 'envio' ? document.getElementById('fDireccion').value.trim() : '';
+  document.getElementById('modalTotalFinal').textContent    = formatPrice(total);
   document.getElementById('modalDeliveryFinal').textContent = delivery;
-  document.getElementById('orderLinesFinal').innerHTML = cart.map(i =>
-    `<div class="order-line">
-       <span>${i.emoji} ${esc(i.title)} ×${i.qty} ${i.estado ? '(' + esc(i.estado) + ')' : ''}</span>
-       <span>${formatPrice(i.price * i.qty)}</span>
-     </div>`
+  document.getElementById('orderLinesFinal').innerHTML      = cart.map(i =>
+    '<div class="order-line"><span>' + i.emoji + ' ' + esc(i.title) + ' ×' + i.qty + (i.estado ? ' (' + esc(i.estado) + ')' : '') + '</span><span>' + formatPrice(i.price * i.qty) + '</span></div>'
   ).join('');
-
-  let clienteInfo = `👤 ${nombre} · 📱 ${celular}`;
-  if (deliveryMode === 'envio' && ciudad)    clienteInfo += `<br>🏙️ ${esc(ciudad)}`;
-  if (deliveryMode === 'envio' && direccion) clienteInfo += `<br>📍 ${esc(direccion)}`;
-  document.getElementById('modalClienteFinal').innerHTML = clienteInfo;
+  let info = '👤 ' + nombre + ' · 📱 ' + celular;
+  if (ciudad)    info += '<br>🏙️ ' + esc(ciudad);
+  if (direccion) info += '<br>📍 ' + esc(direccion);
+  document.getElementById('modalClienteFinal').innerHTML = info;
 }
 
-// ── Validación del formulario ──────────────────────────────────
 function validateForm() {
   let ok = true;
-
   const nombre  = document.getElementById('fNombre').value.trim();
   const celular = document.getElementById('fCelular').value.replace(/\s/g,'');
-
-  // Nombre
   const errN = document.getElementById('errNombre');
   const inpN = document.getElementById('fNombre');
-  if (!nombre) {
-    errN.classList.add('show'); inpN.classList.add('error'); ok = false;
-  } else {
-    errN.classList.remove('show'); inpN.classList.remove('error');
-  }
-
-  // Celular (10 dígitos)
+  if (!nombre) { errN.classList.add('show'); inpN.classList.add('error'); ok = false; }
+  else         { errN.classList.remove('show'); inpN.classList.remove('error'); }
   const errC = document.getElementById('errCelular');
   const inpC = document.getElementById('fCelular');
-  if (!/^[0-9]{10}$/.test(celular)) {
-    errC.classList.add('show'); inpC.classList.add('error'); ok = false;
-  } else {
-    errC.classList.remove('show'); inpC.classList.remove('error');
-  }
-
-  // Ciudad y dirección (solo si es envío)
+  if (!/^[0-9]{10}$/.test(celular)) { errC.classList.add('show'); inpC.classList.add('error'); ok = false; }
+  else                               { errC.classList.remove('show'); inpC.classList.remove('error'); }
   if (deliveryMode === 'envio') {
     const ciudad    = document.getElementById('fCiudad').value.trim();
     const direccion = document.getElementById('fDireccion').value.trim();
-
     const errCiu = document.getElementById('errCiudad');
     const inpCiu = document.getElementById('fCiudad');
-    if (!ciudad) {
-      errCiu.classList.add('show'); inpCiu.classList.add('error'); ok = false;
-    } else {
-      errCiu.classList.remove('show'); inpCiu.classList.remove('error');
-    }
-
+    if (!ciudad) { errCiu.classList.add('show'); inpCiu.classList.add('error'); ok = false; }
+    else         { errCiu.classList.remove('show'); inpCiu.classList.remove('error'); }
     const errDir = document.getElementById('errDireccion');
     const inpDir = document.getElementById('fDireccion');
-    if (!direccion) {
-      errDir.classList.add('show'); inpDir.classList.add('error'); ok = false;
-    } else {
-      errDir.classList.remove('show'); inpDir.classList.remove('error');
-    }
+    if (!direccion) { errDir.classList.add('show'); inpDir.classList.add('error'); ok = false; }
+    else            { errDir.classList.remove('show'); inpDir.classList.remove('error'); }
   }
   return ok;
 }
 
-// ╔══════════════════════════════════════════════════════════════╗
-// ║  ENVIAR WHATSAPP + REGISTRAR VENTA                          ║
-// ╚══════════════════════════════════════════════════════════════╝
 async function sendWhatsApp() {
   const btn    = document.getElementById('waBtn');
   const status = document.getElementById('modalStatus');
 
-  // ── FIX punto 4: si ya se registró, solo abre WhatsApp ──────
+  // FIX doble registro: si ya se registró, solo abre WhatsApp de nuevo
   if (pedidoYaEnviado && pedidoActual) {
     abrirWhatsApp(pedidoActual);
     return;
@@ -885,69 +825,50 @@ async function sendWhatsApp() {
   status.style.color = 'var(--brown)';
   status.textContent = '⏳ Registrando pedido…';
 
-  const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const delivery = deliveryMode === 'envio' ? '🚚 Solicitar envío' : '🏪 Recojo en tienda';
-  const nombre   = document.getElementById('fNombre').value.trim();
-  const celular  = document.getElementById('fCelular').value.replace(/\s/g,'');
-  const ciudad   = deliveryMode === 'envio' ? document.getElementById('fCiudad').value.trim()    : 'N/A';
-  const direccion= deliveryMode === 'envio' ? document.getElementById('fDireccion').value.trim() : 'N/A';
+  const total     = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery  = deliveryMode === 'envio' ? '🚚 Solicitar envío' : '🏪 Recojo en tienda';
+  const nombre    = document.getElementById('fNombre').value.trim();
+  const celular   = document.getElementById('fCelular').value.replace(/\s/g,'');
+  const ciudad    = deliveryMode === 'envio' ? document.getElementById('fCiudad').value.trim()    : 'N/A';
+  const direccion = deliveryMode === 'envio' ? document.getElementById('fDireccion').value.trim() : 'N/A';
 
   const payload = {
     libros: cart.map(i => ({
-      id:       i.id,
-      titulo:   i.title,
-      autor:    i.author,
-      estado:   i.estado || '',
-      precio:   i.price,
-      cantidad: i.qty,
-      subtotal: i.price * i.qty,
+      id: i.id, titulo: i.title, autor: i.author, estado: i.estado || '',
+      precio: i.price, cantidad: i.qty, subtotal: i.price * i.qty,
     })),
-    entrega:   delivery,
-    total,
-    cliente:   nombre,
-    celular,
-    direccion,
-    ciudad,
+    entrega: delivery, total, cliente: nombre, celular, direccion, ciudad,
   };
 
-  // ── 1. Registrar en Google Sheets ──────────────────────────
   let numeroPedido = '';
   if (APPS_SCRIPT_URL) {
     try {
       const res = await fetch(APPS_SCRIPT_URL, {
-        method:  'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body:    JSON.stringify(payload),
+        method: 'POST', headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload),
       });
       const txt = await res.text();
-
       if (txt.startsWith('ERROR_STOCK:')) {
         const libro = txt.replace('ERROR_STOCK:','').trim();
-        status.textContent = `⚠️ "${libro}" ya no tiene stock. Por favor recarga la página y ajusta tu pedido.`;
+        status.textContent = '⚠️ "' + libro + '" ya no tiene stock. Ajusta tu pedido.';
         status.style.color = 'var(--rust)';
         btn.disabled = false;
         showToast('⚠️ Stock agotado — ajusta tu pedido', 'warn');
         return;
       }
-
       if (txt.trim().startsWith('LIB-')) {
         numeroPedido    = txt.trim();
         pedidoActual    = numeroPedido;
-        pedidoYaEnviado = true;            // ← marcar como ya registrado
+        pedidoYaEnviado = true;
         const numEl = document.getElementById('orderNumero');
-        numEl.textContent  = '✅ N° de pedido: ' + numeroPedido;
+        numEl.textContent   = '✅ N° de pedido: ' + numeroPedido;
         numEl.style.display = 'block';
       }
-    } catch (err) {
-      console.warn('Error registrando:', err.message);
-      // Continúa igual hacia WhatsApp
-    }
+    } catch (err) { console.warn('Error registrando:', err.message); }
   }
 
-  // ── 2. Abrir WhatsApp ────────────────────────────────────────
   abrirWhatsApp(numeroPedido, nombre, celular, ciudad, direccion, delivery, total);
 
-  // ── 3. Feedback ──────────────────────────────────────────────
   if (numeroPedido) {
     status.textContent = '✅ Pedido ' + numeroPedido + ' registrado. WhatsApp abierto.';
     status.style.color = 'var(--green)';
@@ -960,7 +881,6 @@ async function sendWhatsApp() {
 }
 
 function abrirWhatsApp(numPedido, nombre, celular, ciudad, direccion, delivery, total) {
-  // Usa los valores actuales si no se pasan argumentos (caso reenvío)
   if (!nombre) {
     nombre    = document.getElementById('fNombre').value.trim();
     celular   = document.getElementById('fCelular').value.replace(/\s/g,'');
@@ -973,7 +893,6 @@ function abrirWhatsApp(numPedido, nombre, celular, ciudad, direccion, delivery, 
   const lines = cart.map(i =>
     '  • ' + i.title + (i.estado ? ' (' + i.estado + ')' : '') + ' x' + i.qty + ' = ' + formatPrice(i.price * i.qty)
   ).join('\n');
-
   let msg = '📚 *PEDIDO — Mi Librería Local*\n';
   if (numPedido) msg += '🔖 *N° ' + numPedido + '*\n';
   msg += '📅 ' + fecha + '\n\n';
@@ -986,12 +905,30 @@ function abrirWhatsApp(numPedido, nombre, celular, ciudad, direccion, delivery, 
   msg += '\n*Libros:*\n' + lines + '\n\n';
   msg += '💰 *Total libros: ' + formatPrice(total) + '*\n';
   msg += delivery + '\n';
-  if (deliveryMode === 'envio') {
-    msg += '_(El envío se paga contraentrega al mensajero)_\n';
-  }
+  if (deliveryMode === 'envio') msg += '_(El envío se paga contraentrega al mensajero)_\n';
   msg += '\nAdjunto el soporte de pago. ¡Gracias! 🐾';
-
   window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ── Auto-rotación imágenes celular (fix EXIF desde Google Drive) ─
+function fixImgOrientation(img) {
+  if (!img.complete || !img.naturalWidth || img.dataset.fixed) return;
+  if (img.naturalWidth / img.naturalHeight <= 1.15) return;
+  const canvas = document.createElement('canvas');
+  const ctx    = canvas.getContext('2d');
+  canvas.width  = img.naturalHeight;
+  canvas.height = img.naturalWidth;
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate(Math.PI / 2);
+  ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
+  img.src           = canvas.toDataURL('image/jpeg', 0.92);
+  img.dataset.fixed = '1';
+}
+function applyOrientationFix() {
+  document.querySelectorAll('.book-cover img, .item-thumb').forEach(img => {
+    if (img.complete && img.naturalWidth) fixImgOrientation(img);
+    else img.addEventListener('load', () => fixImgOrientation(img), { once: true });
+  });
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -1035,38 +972,6 @@ const SAMPLE_BOOKS = [
   {id:'5', title:'Música de huesos',                  author:'Germán Hermida',  estado:'Usado',  price:40000, stock:0, emoji:'🎵', image:''},
   {id:'6', title:'La cabina mágica',                  author:'Norton Juster',   estado:'Usado',  price:45000, stock:1, emoji:'✨', image:''},
 ];
-
-
-// ── Auto-rotación: corrige fotos horizontales tomadas con celular ──────────
-// Google Drive thumbnail no siempre preserva el EXIF de orientación.
-// Este fix detecta imágenes con ratio horizontal (paisaje) y las rota 90°
-// usando canvas para que queden en portrait (como portadas de libro).
-function fixImgOrientation(img) {
-  if (!img.complete || !img.naturalWidth || img.dataset.fixed) return;
-  const ratio = img.naturalWidth / img.naturalHeight;
-  if (ratio <= 1.15) return; // ya es vertical o cuadrada, sin cambios
-
-  const canvas = document.createElement('canvas');
-  const ctx    = canvas.getContext('2d');
-  // Intercambia ancho/alto para la rotación 90°
-  canvas.width  = img.naturalHeight;
-  canvas.height = img.naturalWidth;
-  ctx.translate(canvas.width / 2, canvas.height / 2);
-  ctx.rotate(Math.PI / 2);
-  ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
-  img.src          = canvas.toDataURL('image/jpeg', 0.92);
-  img.dataset.fixed = '1';
-}
-
-function applyOrientationFix() {
-  document.querySelectorAll('.book-cover img, .item-thumb').forEach(img => {
-    if (img.complete && img.naturalWidth) {
-      fixImgOrientation(img);
-    } else {
-      img.addEventListener('load', () => fixImgOrientation(img), { once: true });
-    }
-  });
-}
 
 init();
 </script>
