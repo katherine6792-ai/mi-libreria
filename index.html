@@ -73,7 +73,7 @@
     .book-card { background:var(--warm-white); border-radius:16px; overflow:hidden; box-shadow:0 2px 12px var(--shadow); transition:transform .25s,box-shadow .25s; display:flex; flex-direction:column; }
     .book-card:hover { transform:translateY(-6px) rotate(.3deg); box-shadow:0 14px 32px var(--shadow-deep); }
     .book-cover { position:relative; height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
-    .book-cover img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+    .book-cover img { width:100%; height:100%; object-fit:cover; object-position:center top; image-orientation:from-image; transition:transform .4s; }
     .book-card:hover .book-cover img { transform:scale(1.05); }
     .book-cover-placeholder { font-size:3.5rem; opacity:.4; }
     .stock-badge { position:absolute; top:8px; left:8px; color:#fff; font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:.22rem .6rem; border-radius:20px; }
@@ -103,7 +103,7 @@
     .cart-items { flex:1; overflow-y:auto; padding:1.2rem; display:flex; flex-direction:column; gap:.9rem; }
     .cart-item { display:flex; gap:.9rem; align-items:flex-start; background:var(--paper); border-radius:14px; padding:.85rem; animation:slideIn .2s ease; }
     @keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
-    .item-thumb { width:52px; height:68px; border-radius:8px; object-fit:cover; flex-shrink:0; }
+    .item-thumb { width:52px; height:68px; border-radius:8px; object-fit:cover; object-position:center top; image-orientation:from-image; flex-shrink:0; }
     .item-emoji { font-size:1.8rem; flex-shrink:0; line-height:1; width:52px; text-align:center; }
     .item-info { flex:1; min-width:0; }
     .item-name { font-family:'Playfair Display',serif; font-size:.88rem; font-weight:700; line-height:1.3; }
@@ -176,6 +176,45 @@
     footer { background:var(--brown); color:rgba(250,246,239,.65); text-align:center; padding:2rem; font-size:.8rem; margin-top:4rem; }
     footer strong { color:var(--cream); }
 
+    /* ── MODAL STEPS ── */
+    .modal-step { display:none; }
+    .modal-step.active { display:block; }
+    .step-indicator { display:flex; gap:.5rem; margin-bottom:1.5rem; align-items:center; }
+    .step-dot { width:28px; height:28px; border-radius:50%; background:var(--paper); border:2px solid rgba(92,61,30,.2); display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; color:var(--brown); transition:all .25s; flex-shrink:0; }
+    .step-dot.active { background:var(--brown); color:var(--cream); border-color:var(--brown); }
+    .step-dot.done { background:var(--amber); color:var(--ink); border-color:var(--amber); }
+    .step-line { flex:1; height:2px; background:var(--paper); transition:background .25s; }
+    .step-line.done { background:var(--amber); }
+
+    /* ── CUSTOMER FORM ── */
+    .form-group { margin-bottom:.95rem; }
+    .form-label { display:block; font-size:.78rem; font-weight:600; color:var(--brown); margin-bottom:.35rem; }
+    .form-label .req { color:var(--rust); }
+    .form-input { width:100%; border:1.5px solid rgba(92,61,30,.2); border-radius:12px; padding:.72rem 1rem; font-family:'DM Sans',sans-serif; font-size:.88rem; color:var(--ink); background:var(--warm-white); outline:none; transition:border-color .2s,box-shadow .2s; }
+    .form-input:focus { border-color:var(--amber); box-shadow:0 0 0 3px rgba(200,131,42,.12); }
+    .form-input.error { border-color:var(--rust); }
+    .field-error { font-size:.71rem; color:var(--rust); margin-top:.25rem; display:none; }
+    .field-error.show { display:block; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+    .envio-fields { margin-top:.2rem; }
+
+    /* ── DELIVERY INFO BOXES ── */
+    .deli-box { border-radius:14px; padding:.9rem 1.1rem; margin-bottom:1.1rem; }
+    .deli-box.recojo { background:rgba(45,106,79,.07); border:1.5px solid rgba(45,106,79,.22); }
+    .deli-box.envio  { background:rgba(200,131,42,.07); border:1.5px solid rgba(200,131,42,.3); }
+    .deli-box-title { font-weight:700; font-size:.84rem; margin-bottom:.35rem; display:flex; align-items:center; gap:.45rem; }
+    .deli-box.recojo .deli-box-title { color:var(--green); }
+    .deli-box.envio  .deli-box-title { color:#a06010; }
+    .deli-box p { font-size:.79rem; line-height:1.65; color:var(--ink); opacity:.85; }
+    .deli-box p+p { margin-top:.3rem; }
+
+    /* ── STEP BUTTONS ── */
+    .step-btns { display:flex; gap:.8rem; margin-top:1.2rem; }
+    .btn-back { background:var(--paper); color:var(--brown); border:1.5px solid rgba(92,61,30,.18); border-radius:30px; padding:.75rem 1.2rem; font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:600; cursor:pointer; transition:background .15s; flex-shrink:0; }
+    .btn-back:hover { background:rgba(92,61,30,.1); }
+    .btn-next { flex:1; background:linear-gradient(135deg,var(--amber),var(--amber-light)); color:var(--ink); border:none; border-radius:30px; padding:.8rem; font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:700; cursor:pointer; transition:transform .15s,box-shadow .15s; }
+    .btn-next:hover { transform:translateY(-2px); box-shadow:0 5px 18px rgba(200,131,42,.35); }
+
     /* ── RESPONSIVE ── */
     @media (max-width:640px) {
       .search-bar { display:none; }
@@ -183,6 +222,7 @@
       .hero-mascot { width:140px; }
       .books-grid { grid-template-columns:repeat(2,1fr); gap:1rem; }
       .catalog-section, .filters-bar { padding:0 1rem; }
+      .form-row { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -212,7 +252,7 @@
 
 <!-- ══════ MISSION BAND ══════ -->
 <div class="mission-band">
-  🐾 Somos una librería con corazón. 🐱🐶
+  🐾 Somos una librería con corazón: parte de cada venta apoya el bienestar de animales en nuestra comunidad. 🐱🐶
 </div>
 
 <!-- ══════ HERO ══════ -->
@@ -221,10 +261,11 @@
   <div class="hero-content">
     <div class="hero-tag">✨ Inventario en tiempo real</div>
     <h1>Encuentra tu próximo<br/><em>libro favorito</em></h1>
-    <p>Libros nuevos y usados, escogidos con amor.🐾</p>
+    <p>Libros nuevos y usados, escogidos con amor. Recoge en tienda o pide envío. Parte de cada compra apoya a los animales 🐾</p>
     <div class="hero-badges">
       <span class="badge">📦 Envío disponible</span>
       <span class="badge">💚 Nequi · Daviplata</span>
+      <span class="badge">🐾 Apoya animales</span>
       <span class="badge" id="heroBadgeBooks">📚 Cargando…</span>
     </div>
   </div>
@@ -274,49 +315,122 @@
     </button>
   </div>
 </div>
-
-<!-- ══════ PAYMENT MODAL ══════ -->
+<!-- ══════ PAYMENT MODAL (3 pasos) ══════ -->
 <div class="modal-overlay" id="paymentModal">
   <div class="modal">
     <div class="modal-head">
       <button class="modal-close" onclick="closePayment()">✕</button>
-      <h2>💳 Completar Pago</h2>
-      <p>Realiza la transferencia y envía tu soporte</p>
+      <h2 id="modalHeadTitle">📋 Tu pedido</h2>
+      <p id="modalHeadSub">Revisa los libros seleccionados</p>
     </div>
     <div class="modal-body">
 
-      <div class="order-summary">
-        <h3>📋 Resumen del pedido</h3>
-        <div id="orderLines"></div>
-        <div class="order-total-line">
-          <span>Total</span><span id="modalTotal">$0</span>
-        </div>
-        <div style="font-size:.78rem;color:var(--brown);opacity:.7;margin-top:.4rem" id="modalDelivery"></div>
-        <div class="order-numero" id="orderNumero"></div>
+      <!-- Indicador de pasos -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-line" id="line1"></div>
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-line" id="line2"></div>
+        <div class="step-dot" id="dot3">3</div>
       </div>
 
-      <div class="payment-info">
-        <div class="payment-title">Transferir a:</div>
-        <div class="payment-methods">
-          <div class="pay-method">
-            <strong>Nequi</strong>
-            <div class="pay-number">313 387 8659</div>
-            <div class="pay-name">Mi Librería Local</div>
-          </div>
-          <div class="pay-method">
-            <strong>Daviplata</strong>
-            <div class="pay-number">313 387 8659</div>
-            <div class="pay-name">Mi Librería Local</div>
+      <!-- ══ PASO 1: Resumen + info entrega ══ -->
+      <div class="modal-step active" id="step1">
+        <div class="order-summary">
+          <h3>📋 Resumen del pedido</h3>
+          <div id="orderLines"></div>
+          <div class="order-total-line">
+            <span>Total libros</span><span id="modalTotal">$0</span>
           </div>
         </div>
-        <div class="warning-box">⚠️ <span>Descarga el soporte (captura o PDF) antes de enviarlo por WhatsApp.</span></div>
+
+        <div class="deli-box recojo" id="infoRecojo">
+          <div class="deli-box-title">🏪 Recojo en tienda — ¡Gratis!</div>
+          <p>Puedes pasar a recoger tu pedido directamente en nuestra tienda, sin ningún costo adicional.</p>
+          <p>Te contactaremos por WhatsApp para confirmar el horario de entrega una vez recibamos el pago.</p>
+        </div>
+
+        <div class="deli-box envio" id="infoEnvio" style="display:none">
+          <div class="deli-box-title">🚚 Envío a domicilio</div>
+          <p><strong>El valor de los libros se paga antes</strong> por Nequi o Daviplata al 313 387 8659.</p>
+          <p>El <strong>costo del envío se paga aparte, contraentrega</strong> directamente al mensajero. El valor varía según tu ciudad y te lo confirmamos por WhatsApp.</p>
+        </div>
+
+        <div class="step-btns">
+          <button class="btn-next" onclick="goStep(2)">Continuar → Mis datos</button>
+        </div>
       </div>
 
-      <button class="wa-btn" id="waBtn" onclick="sendWhatsApp()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-        Enviar soporte por WhatsApp
-      </button>
-      <div class="modal-status" id="modalStatus"></div>
+      <!-- ══ PASO 2: Datos del cliente ══ -->
+      <div class="modal-step" id="step2">
+        <div class="form-group">
+          <label class="form-label">Nombre completo <span class="req">*</span></label>
+          <input class="form-input" id="fNombre" type="text" placeholder="Tu nombre y apellido"/>
+          <div class="field-error" id="errNombre">Por favor ingresa tu nombre</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de celular <span class="req">*</span></label>
+          <input class="form-input" id="fCelular" type="tel" placeholder="300 000 0000"/>
+          <div class="field-error" id="errCelular">Ingresa un celular válido (10 dígitos)</div>
+        </div>
+        <div class="envio-fields" id="envioFields" style="display:none">
+          <div class="form-group">
+            <label class="form-label">Ciudad de envío <span class="req">*</span></label>
+            <input class="form-input" id="fCiudad" type="text" placeholder="Ej: Bogotá, Medellín, Cali…"/>
+            <div class="field-error" id="errCiudad">Ingresa tu ciudad</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Dirección completa <span class="req">*</span></label>
+            <input class="form-input" id="fDireccion" type="text" placeholder="Calle, carrera, barrio, apto…"/>
+            <div class="field-error" id="errDireccion">Ingresa tu dirección</div>
+          </div>
+        </div>
+        <div class="step-btns">
+          <button class="btn-back" onclick="goStep(1)">← Volver</button>
+          <button class="btn-next" onclick="goStep(3)">Continuar → Pagar</button>
+        </div>
+      </div>
+
+      <!-- ══ PASO 3: Pago ══ -->
+      <div class="modal-step" id="step3">
+        <div class="order-summary" style="margin-bottom:1rem">
+          <h3>✅ Resumen final</h3>
+          <div id="orderLinesFinal"></div>
+          <div class="order-total-line">
+            <span>Total libros</span><span id="modalTotalFinal">$0</span>
+          </div>
+          <div style="font-size:.78rem;color:var(--brown);opacity:.75;margin-top:.35rem" id="modalDeliveryFinal"></div>
+          <div style="font-size:.8rem;color:var(--ink);margin-top:.4rem;line-height:1.6" id="modalClienteFinal"></div>
+          <div id="orderNumero" style="display:none;margin-top:.5rem;font-size:.8rem;color:var(--green);font-weight:700;background:rgba(45,106,79,.08);border-radius:8px;padding:.35rem .7rem;"></div>
+        </div>
+
+        <div class="payment-info">
+          <div class="payment-title">Transferir a:</div>
+          <div class="payment-methods">
+            <div class="pay-method">
+              <strong>Nequi</strong>
+              <div class="pay-number">313 387 8659</div>
+              <div class="pay-name">Mi Librería Local</div>
+            </div>
+            <div class="pay-method">
+              <strong>Daviplata</strong>
+              <div class="pay-number">313 387 8659</div>
+              <div class="pay-name">Mi Librería Local</div>
+            </div>
+          </div>
+          <div class="warning-box">⚠️ <span>Descarga el soporte (captura o PDF) antes de enviarlo por WhatsApp.</span></div>
+        </div>
+
+        <button class="wa-btn" id="waBtn" onclick="sendWhatsApp()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Enviar soporte por WhatsApp
+        </button>
+        <div class="step-btns" style="margin-top:.8rem">
+          <button class="btn-back" onclick="goStep(2)">← Editar datos</button>
+        </div>
+        <div class="modal-status" id="modalStatus" style="text-align:center;font-size:.78rem;margin-top:.75rem;min-height:1.2em;"></div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -336,8 +450,7 @@
 // ╔══════════════════════════════════════════════════════════════╗
 // ║  CONFIGURACIÓN — pega aquí la URL del Apps Script           ║
 // ╚══════════════════════════════════════════════════════════════╝
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-yfrd9AM6CBmpubYJkcgd8OFNHvW51Apf3LxfvCUCPpAFE3ww3KJX3gGQlX50hJha1A/exec';
-// Ejemplo: ''
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-yfrd9AM6CBmpubYJkcgd8OFNHvW51Apf3LxfvCUCPpAFE3ww3KJX3gGQ1X50hJha1A/exec';
 
 const WA_NUMBER = '573108752553';
 
@@ -514,6 +627,7 @@ function renderBooks() {
       </div>
     </div>`;
   }).join('');
+  requestAnimationFrame(applyOrientationFix); // fix rotación celular
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -610,44 +724,174 @@ function setDelivery(mode) {
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
-// ║  PAGO — openPayment / sendWhatsApp                          ║
+// ║  MODAL — navegación por pasos                               ║
 // ╚══════════════════════════════════════════════════════════════╝
-function openPayment() {
-  pedidoActual = '';
-  const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const delivery = deliveryMode === 'envio' ? '🚚 Solicitar envío' : '🏪 Recojo en tienda';
+let pedidoActual  = '';
+let pedidoYaEnviado = false; // ← FIX punto 4: evita doble registro
 
-  document.getElementById('modalTotal').textContent   = formatPrice(total);
-  document.getElementById('modalDelivery').textContent = delivery;
-  document.getElementById('orderLines').innerHTML = cart.map(i =>
+const STEP_TITLES = [
+  null,
+  { h: '📋 Tu pedido',   p: 'Revisa los libros seleccionados' },
+  { h: '👤 Tus datos',   p: 'Necesitamos saber a quién contactar' },
+  { h: '💳 Pagar',       p: 'Realiza la transferencia y envía el soporte' },
+];
+
+function goStep(n) {
+  // Validar formulario antes de pasar al paso 3
+  if (n === 3 && !validateForm()) return;
+
+  // Actualizar step-dots y lines
+  [1,2,3].forEach(i => {
+    const dot  = document.getElementById('dot' + i);
+    const line = document.getElementById('line' + i);
+    dot.classList.remove('active','done');
+    if (i < n)       { dot.classList.add('done');   }
+    else if (i === n){ dot.classList.add('active');  }
+    if (line) line.classList.toggle('done', i < n);
+  });
+
+  // Mostrar/ocultar pasos
+  [1,2,3].forEach(i => {
+    document.getElementById('step' + i).classList.toggle('active', i === n);
+  });
+
+  // Actualizar cabecera del modal
+  const t = STEP_TITLES[n];
+  document.getElementById('modalHeadTitle').textContent = t.h;
+  document.getElementById('modalHeadSub').textContent   = t.p;
+
+  // Al llegar al paso 3: poblar resumen final
+  if (n === 3) populateFinalStep();
+}
+
+function openPayment() {
+  pedidoActual    = '';
+  pedidoYaEnviado = false;
+
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('modalTotal').textContent = formatPrice(total);
+  document.getElementById('orderLines').innerHTML   = cart.map(i =>
     `<div class="order-line">
-       <span>${i.emoji} ${esc(i.title)} ×${i.qty} ${i.estado ? `(${esc(i.estado)})` : ''}</span>
+       <span>${i.emoji} ${esc(i.title)} ×${i.qty} ${i.estado ? '(' + esc(i.estado) + ')' : ''}</span>
        <span>${formatPrice(i.price * i.qty)}</span>
      </div>`
   ).join('');
 
-  const numEl = document.getElementById('orderNumero');
-  numEl.style.display = 'none'; numEl.textContent = '';
+  // Mostrar/ocultar info de entrega
+  document.getElementById('infoRecojo').style.display = deliveryMode === 'recojo' ? '' : 'none';
+  document.getElementById('infoEnvio').style.display  = deliveryMode === 'envio'  ? '' : 'none';
+  document.getElementById('envioFields').style.display = deliveryMode === 'envio' ? '' : 'none';
+
+  // Reset estado
   document.getElementById('modalStatus').textContent = '';
   document.getElementById('waBtn').disabled = false;
+  document.getElementById('orderNumero').style.display = 'none';
+
+  // Ir al paso 1
+  goStep(1);
   document.getElementById('paymentModal').classList.add('open');
 }
+
 function closePayment() {
   document.getElementById('paymentModal').classList.remove('open');
 }
 
+function populateFinalStep() {
+  const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery = deliveryMode === 'envio' ? '🚚 Solicitar envío — Envío contraentrega' : '🏪 Recojo en tienda — Gratis';
+  const nombre   = document.getElementById('fNombre').value.trim();
+  const celular  = document.getElementById('fCelular').value.trim();
+  const ciudad   = document.getElementById('fCiudad')   ? document.getElementById('fCiudad').value.trim()    : '';
+  const direccion= document.getElementById('fDireccion') ? document.getElementById('fDireccion').value.trim() : '';
+
+  document.getElementById('modalTotalFinal').textContent  = formatPrice(total);
+  document.getElementById('modalDeliveryFinal').textContent = delivery;
+  document.getElementById('orderLinesFinal').innerHTML = cart.map(i =>
+    `<div class="order-line">
+       <span>${i.emoji} ${esc(i.title)} ×${i.qty} ${i.estado ? '(' + esc(i.estado) + ')' : ''}</span>
+       <span>${formatPrice(i.price * i.qty)}</span>
+     </div>`
+  ).join('');
+
+  let clienteInfo = `👤 ${nombre} · 📱 ${celular}`;
+  if (deliveryMode === 'envio' && ciudad)    clienteInfo += `<br>🏙️ ${esc(ciudad)}`;
+  if (deliveryMode === 'envio' && direccion) clienteInfo += `<br>📍 ${esc(direccion)}`;
+  document.getElementById('modalClienteFinal').innerHTML = clienteInfo;
+}
+
+// ── Validación del formulario ──────────────────────────────────
+function validateForm() {
+  let ok = true;
+
+  const nombre  = document.getElementById('fNombre').value.trim();
+  const celular = document.getElementById('fCelular').value.replace(/\s/g,'');
+
+  // Nombre
+  const errN = document.getElementById('errNombre');
+  const inpN = document.getElementById('fNombre');
+  if (!nombre) {
+    errN.classList.add('show'); inpN.classList.add('error'); ok = false;
+  } else {
+    errN.classList.remove('show'); inpN.classList.remove('error');
+  }
+
+  // Celular (10 dígitos)
+  const errC = document.getElementById('errCelular');
+  const inpC = document.getElementById('fCelular');
+  if (!/^[0-9]{10}$/.test(celular)) {
+    errC.classList.add('show'); inpC.classList.add('error'); ok = false;
+  } else {
+    errC.classList.remove('show'); inpC.classList.remove('error');
+  }
+
+  // Ciudad y dirección (solo si es envío)
+  if (deliveryMode === 'envio') {
+    const ciudad    = document.getElementById('fCiudad').value.trim();
+    const direccion = document.getElementById('fDireccion').value.trim();
+
+    const errCiu = document.getElementById('errCiudad');
+    const inpCiu = document.getElementById('fCiudad');
+    if (!ciudad) {
+      errCiu.classList.add('show'); inpCiu.classList.add('error'); ok = false;
+    } else {
+      errCiu.classList.remove('show'); inpCiu.classList.remove('error');
+    }
+
+    const errDir = document.getElementById('errDireccion');
+    const inpDir = document.getElementById('fDireccion');
+    if (!direccion) {
+      errDir.classList.add('show'); inpDir.classList.add('error'); ok = false;
+    } else {
+      errDir.classList.remove('show'); inpDir.classList.remove('error');
+    }
+  }
+  return ok;
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  ENVIAR WHATSAPP + REGISTRAR VENTA                          ║
+// ╚══════════════════════════════════════════════════════════════╝
 async function sendWhatsApp() {
   const btn    = document.getElementById('waBtn');
   const status = document.getElementById('modalStatus');
+
+  // ── FIX punto 4: si ya se registró, solo abre WhatsApp ──────
+  if (pedidoYaEnviado && pedidoActual) {
+    abrirWhatsApp(pedidoActual);
+    return;
+  }
+
   btn.disabled = true;
-  status.textContent = '⏳ Registrando pedido en el sistema…';
   status.style.color = 'var(--brown)';
+  status.textContent = '⏳ Registrando pedido…';
 
   const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const delivery = deliveryMode === 'envio' ? '🚚 Solicitar envío' : '🏪 Recojo en tienda';
-  const fecha    = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+  const nombre   = document.getElementById('fNombre').value.trim();
+  const celular  = document.getElementById('fCelular').value.replace(/\s/g,'');
+  const ciudad   = deliveryMode === 'envio' ? document.getElementById('fCiudad').value.trim()    : 'N/A';
+  const direccion= deliveryMode === 'envio' ? document.getElementById('fDireccion').value.trim() : 'N/A';
 
-  // ── Payload que espera doPost() ─────────────────────────────
   const payload = {
     libros: cart.map(i => ({
       id:       i.id,
@@ -660,71 +904,94 @@ async function sendWhatsApp() {
     })),
     entrega:   delivery,
     total,
-    cliente:   'Cliente web',
-    celular:   '—',
-    direccion: deliveryMode === 'envio' ? 'Por confirmar vía WhatsApp' : 'N/A',
-    ciudad:    deliveryMode === 'envio' ? 'Por confirmar vía WhatsApp' : 'N/A',
+    cliente:   nombre,
+    celular,
+    direccion,
+    ciudad,
   };
 
   // ── 1. Registrar en Google Sheets ──────────────────────────
   let numeroPedido = '';
   if (APPS_SCRIPT_URL) {
     try {
-      const res  = await fetch(APPS_SCRIPT_URL, {
+      const res = await fetch(APPS_SCRIPT_URL, {
         method:  'POST',
-        headers: { 'Content-Type': 'text/plain' }, // Apps Script requiere text/plain para doPost
+        headers: { 'Content-Type': 'text/plain' },
         body:    JSON.stringify(payload),
       });
       const txt = await res.text();
 
       if (txt.startsWith('ERROR_STOCK:')) {
-        const libroSinStock = txt.replace('ERROR_STOCK:', '');
-        status.textContent = `⚠️ "${libroSinStock}" ya no tiene stock disponible. Recarga la página.`;
+        const libro = txt.replace('ERROR_STOCK:','').trim();
+        status.textContent = `⚠️ "${libro}" ya no tiene stock. Por favor recarga la página y ajusta tu pedido.`;
         status.style.color = 'var(--rust)';
         btn.disabled = false;
-        showToast('⚠️ Stock agotado para uno de los libros', 'warn');
+        showToast('⚠️ Stock agotado — ajusta tu pedido', 'warn');
         return;
       }
 
-      if (txt.startsWith('LIB-')) {
-        numeroPedido = txt.trim();
-        pedidoActual = numeroPedido;
+      if (txt.trim().startsWith('LIB-')) {
+        numeroPedido    = txt.trim();
+        pedidoActual    = numeroPedido;
+        pedidoYaEnviado = true;            // ← marcar como ya registrado
         const numEl = document.getElementById('orderNumero');
-        numEl.textContent = `✅ N° de pedido: ${numeroPedido}`;
+        numEl.textContent  = '✅ N° de pedido: ' + numeroPedido;
         numEl.style.display = 'block';
       }
     } catch (err) {
-      console.warn('Error registrando pedido:', err.message);
-      // Continúa de todas formas con WhatsApp
+      console.warn('Error registrando:', err.message);
+      // Continúa igual hacia WhatsApp
     }
   }
 
-  // ── 2. Armar y abrir WhatsApp ───────────────────────────────
-  const lines = cart.map(i =>
-    `  • ${i.title}${i.estado ? ` (${i.estado})` : ''} ×${i.qty} = ${formatPrice(i.price * i.qty)}`
-  ).join('\n');
+  // ── 2. Abrir WhatsApp ────────────────────────────────────────
+  abrirWhatsApp(numeroPedido, nombre, celular, ciudad, direccion, delivery, total);
 
-  const msg = encodeURIComponent(
-    `📚 *PEDIDO — Mi Librería Local*\n` +
-    (numeroPedido ? `🔖 *N° ${numeroPedido}*\n` : '') +
-    `📅 ${fecha}\n\n` +
-    `*Libros:*\n${lines}\n\n` +
-    `💰 *Total: ${formatPrice(total)}*\n` +
-    `${delivery}\n\n` +
-    `Adjunto el soporte de pago. ¡Gracias! 🐾`
-  );
-  window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
-
-  // ── 3. Feedback final ───────────────────────────────────────
+  // ── 3. Feedback ──────────────────────────────────────────────
   if (numeroPedido) {
-    status.textContent = `✅ Pedido ${numeroPedido} registrado. WhatsApp abierto.`;
+    status.textContent = '✅ Pedido ' + numeroPedido + ' registrado. WhatsApp abierto.';
     status.style.color = 'var(--green)';
-    showToast(`✅ Pedido ${numeroPedido} registrado correctamente`, 'success');
+    showToast('✅ Pedido ' + numeroPedido + ' registrado', 'success');
   } else {
-    status.textContent = 'WhatsApp abierto. El registro automático no está configurado.';
+    status.textContent = 'WhatsApp abierto correctamente.';
     status.style.color = 'var(--brown)';
   }
   btn.disabled = false;
+}
+
+function abrirWhatsApp(numPedido, nombre, celular, ciudad, direccion, delivery, total) {
+  // Usa los valores actuales si no se pasan argumentos (caso reenvío)
+  if (!nombre) {
+    nombre    = document.getElementById('fNombre').value.trim();
+    celular   = document.getElementById('fCelular').value.replace(/\s/g,'');
+    ciudad    = deliveryMode === 'envio' ? document.getElementById('fCiudad').value.trim()    : 'N/A';
+    direccion = deliveryMode === 'envio' ? document.getElementById('fDireccion').value.trim() : 'N/A';
+    delivery  = deliveryMode === 'envio' ? '🚚 Solicitar envío' : '🏪 Recojo en tienda';
+    total     = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  }
+  const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+  const lines = cart.map(i =>
+    '  • ' + i.title + (i.estado ? ' (' + i.estado + ')' : '') + ' x' + i.qty + ' = ' + formatPrice(i.price * i.qty)
+  ).join('\n');
+
+  let msg = '📚 *PEDIDO — Mi Librería Local*\n';
+  if (numPedido) msg += '🔖 *N° ' + numPedido + '*\n';
+  msg += '📅 ' + fecha + '\n\n';
+  msg += '👤 *Cliente:* ' + nombre + '\n';
+  msg += '📱 *Celular:* ' + celular + '\n';
+  if (deliveryMode === 'envio') {
+    msg += '🏙️ *Ciudad:* '    + ciudad    + '\n';
+    msg += '📍 *Dirección:* ' + direccion + '\n';
+  }
+  msg += '\n*Libros:*\n' + lines + '\n\n';
+  msg += '💰 *Total libros: ' + formatPrice(total) + '*\n';
+  msg += delivery + '\n';
+  if (deliveryMode === 'envio') {
+    msg += '_(El envío se paga contraentrega al mensajero)_\n';
+  }
+  msg += '\nAdjunto el soporte de pago. ¡Gracias! 🐾';
+
+  window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -768,6 +1035,38 @@ const SAMPLE_BOOKS = [
   {id:'5', title:'Música de huesos',                  author:'Germán Hermida',  estado:'Usado',  price:40000, stock:0, emoji:'🎵', image:''},
   {id:'6', title:'La cabina mágica',                  author:'Norton Juster',   estado:'Usado',  price:45000, stock:1, emoji:'✨', image:''},
 ];
+
+
+// ── Auto-rotación: corrige fotos horizontales tomadas con celular ──────────
+// Google Drive thumbnail no siempre preserva el EXIF de orientación.
+// Este fix detecta imágenes con ratio horizontal (paisaje) y las rota 90°
+// usando canvas para que queden en portrait (como portadas de libro).
+function fixImgOrientation(img) {
+  if (!img.complete || !img.naturalWidth || img.dataset.fixed) return;
+  const ratio = img.naturalWidth / img.naturalHeight;
+  if (ratio <= 1.15) return; // ya es vertical o cuadrada, sin cambios
+
+  const canvas = document.createElement('canvas');
+  const ctx    = canvas.getContext('2d');
+  // Intercambia ancho/alto para la rotación 90°
+  canvas.width  = img.naturalHeight;
+  canvas.height = img.naturalWidth;
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate(Math.PI / 2);
+  ctx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
+  img.src          = canvas.toDataURL('image/jpeg', 0.92);
+  img.dataset.fixed = '1';
+}
+
+function applyOrientationFix() {
+  document.querySelectorAll('.book-cover img, .item-thumb').forEach(img => {
+    if (img.complete && img.naturalWidth) {
+      fixImgOrientation(img);
+    } else {
+      img.addEventListener('load', () => fixImgOrientation(img), { once: true });
+    }
+  });
+}
 
 init();
 </script>
