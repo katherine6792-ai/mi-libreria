@@ -1,167 +1,776 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📚 Mi Librería Local - Catálogo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root { --primary-color: #2c3e50; --accent-color: #e67e22; }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-        .navbar { background-color: var(--primary-color) !important; padding: 1.5rem 0; }
-        .search-section { background: white; padding: 20px 0; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .search-input { border-radius: 25px; border: 2px solid #eee; padding: 12px 25px; }
-        .card { border: none; border-radius: 12px; transition: transform 0.2s; height: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: relative; }
-        .card:hover { transform: translateY(-5px); }
-        .card-img-top { height: 180px; object-fit: contain; background: #fff; padding: 15px; border-radius: 12px 12px 0 0; }
-        .badge-estado { position: absolute; top: 10px; left: 10px; z-index: 10; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
-        .badge-nuevo { background-color: #27ae60; color: white; }
-        .badge-usado { background-color: #7f8c8d; color: white; }
-        .precio { color: var(--accent-color); font-weight: bold; font-size: 1.1rem; }
-        #floating-cart { position: fixed; bottom: 80px; right: 25px; z-index: 1000; width: 65px; height: 65px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        footer { background: #f1f1f1; padding: 20px 0; margin-top: auto; font-size: 0.75rem; color: #666; text-align: center; }
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>📚 Mi Librería Local</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream:       #faf6ef;
+      --warm-white:  #fff8f0;
+      --ink:         #1a1208;
+      --brown:       #5c3d1e;
+      --amber:       #c8832a;
+      --amber-light: #e8a84a;
+      --sage:        #6b7c5c;
+      --rust:        #b04a2f;
+      --paper:       #f0e8d8;
+      --green:       #2d6a4f;
+      --shadow:      rgba(92,61,30,.15);
+      --shadow-deep: rgba(26,18,8,.28);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+    body::before { content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E"); }
+
+    /* ── HEADER ── */
+    header { background:var(--brown); color:var(--cream); padding:0 2rem; position:sticky; top:0; z-index:100; box-shadow:0 4px 20px var(--shadow-deep); }
+    .header-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:70px; gap:1rem; }
+    .logo { display:flex; align-items:center; gap:.75rem; text-decoration:none; color:inherit; }
+    .logo-img { width:46px; height:46px; border-radius:50%; object-fit:cover; border:2px solid var(--amber); }
+    .logo-text { display:flex; flex-direction:column; line-height:1.1; }
+    .logo-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; }
+    .logo-sub { font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; opacity:.65; }
+    .search-bar { display:flex; align-items:center; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); border-radius:30px; padding:.4rem 1rem; gap:.5rem; transition:background .2s; }
+    .search-bar:focus-within { background:rgba(255,255,255,.22); }
+    .search-bar input { background:none; border:none; outline:none; color:var(--cream); font-family:'DM Sans',sans-serif; font-size:.85rem; width:150px; }
+    .search-bar input::placeholder { color:rgba(255,255,255,.5); }
+    .cart-btn { display:flex; align-items:center; gap:.5rem; background:var(--amber); color:var(--ink); border:none; border-radius:30px; padding:.5rem 1.1rem; font-family:'DM Sans',sans-serif; font-weight:600; font-size:.85rem; cursor:pointer; transition:transform .15s,background .15s; white-space:nowrap; }
+    .cart-btn:hover { background:var(--amber-light); transform:scale(1.04); }
+    .cart-count { background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; }
+
+    /* ── MISSION BAND ── */
+    .mission-band { background:linear-gradient(90deg,var(--sage),#4a6741); color:#fff; text-align:center; padding:.75rem 2rem; font-size:.82rem; }
+
+    /* ── HERO ── */
+    .hero { position:relative; background:linear-gradient(135deg,var(--brown) 0%,#3a2410 100%); color:var(--cream); padding:3.5rem 2rem 4.5rem; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:3rem; flex-wrap:wrap; text-align:center; }
+    .hero-mascot { flex-shrink:0; width:clamp(150px,20vw,230px); filter:drop-shadow(0 8px 24px rgba(0,0,0,.5)); animation:float 4s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .hero-content { max-width:480px; }
+    .hero-tag { display:inline-block; background:var(--amber); color:var(--ink); font-size:.72rem; font-weight:600; letter-spacing:.18em; text-transform:uppercase; padding:.3rem 1rem; border-radius:20px; margin-bottom:1.2rem; }
+    .hero h1 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,5vw,3.2rem); font-weight:900; line-height:1.1; margin-bottom:.8rem; }
+    .hero h1 em { font-style:italic; color:var(--amber-light); }
+    .hero p { font-size:.95rem; opacity:.75; line-height:1.7; margin-bottom:1.5rem; }
+    .hero-badges { display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center; }
+    .badge { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); border-radius:20px; padding:.35rem .9rem; font-size:.75rem; }
+
+    /* ── FILTERS ── */
+    .filters-bar { max-width:1200px; margin:2rem auto 0; padding:0 2rem; display:flex; gap:.6rem; flex-wrap:wrap; }
+    .cat-pill { background:var(--paper); border:1.5px solid rgba(92,61,30,.15); border-radius:30px; padding:.4rem 1rem; font-size:.82rem; font-weight:500; cursor:pointer; transition:all .2s; color:var(--brown); }
+    .cat-pill:hover, .cat-pill.active { background:var(--brown); color:var(--cream); border-color:var(--brown); }
+
+    /* ── CATALOG ── */
+    .catalog-section { max-width:1200px; margin:2rem auto; padding:0 2rem; }
+    .section-header { display:flex; align-items:baseline; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .section-title { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:700; color:var(--brown); }
+    .section-line { flex:1; height:1px; background:linear-gradient(to right,var(--amber),transparent); }
+    .results-count { font-size:.8rem; color:var(--brown); opacity:.6; }
+    .books-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1.4rem; }
+
+    /* ── BOOK CARD ── */
+    .book-card { background:var(--warm-white); border-radius:16px; overflow:hidden; box-shadow:0 2px 12px var(--shadow); transition:transform .25s,box-shadow .25s; display:flex; flex-direction:column; }
+    .book-card:hover { transform:translateY(-6px) rotate(.3deg); box-shadow:0 14px 32px var(--shadow-deep); }
+    .book-cover { position:relative; height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .book-cover img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+    .book-card:hover .book-cover img { transform:scale(1.05); }
+    .book-cover-placeholder { font-size:3.5rem; opacity:.4; }
+    .stock-badge { position:absolute; top:8px; left:8px; color:#fff; font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:.22rem .6rem; border-radius:20px; }
+    .stock-badge.out { background:var(--rust); }
+    .stock-badge.low { background:var(--amber); color:var(--ink); }
+    .stock-badge.ok  { background:var(--green); }
+    .estado-badge { position:absolute; top:8px; right:8px; background:rgba(26,18,8,.7); color:var(--cream); font-size:.6rem; font-weight:600; padding:.2rem .55rem; border-radius:20px; backdrop-filter:blur(4px); }
+    .book-info { padding:1rem; flex:1; display:flex; flex-direction:column; gap:.35rem; }
+    .book-title { font-family:'Playfair Display',serif; font-size:.93rem; font-weight:700; line-height:1.3; color:var(--ink); }
+    .book-author { font-size:.76rem; color:var(--brown); opacity:.7; }
+    .book-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:.5rem; }
+    .book-price { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--brown); }
+    .add-btn { background:var(--amber); color:var(--ink); border:none; border-radius:50%; width:34px; height:34px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s,background .15s; font-weight:700; }
+    .add-btn:hover:not(:disabled) { background:var(--amber-light); transform:scale(1.15) rotate(90deg); }
+    .add-btn:disabled { background:#ccc; color:#888; cursor:not-allowed; }
+    .out-label { font-size:.72rem; font-weight:600; color:var(--rust); background:rgba(176,74,47,.1); border-radius:20px; padding:.25rem .7rem; }
+
+    /* ── CART DRAWER ── */
+    .cart-overlay { position:fixed; inset:0; z-index:200; background:rgba(26,18,8,.5); backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity .3s; }
+    .cart-overlay.open { opacity:1; pointer-events:all; }
+    .cart-drawer { position:fixed; right:0; top:0; bottom:0; width:min(430px,100vw); background:var(--warm-white); z-index:201; transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; box-shadow:-8px 0 40px var(--shadow-deep); }
+    .cart-drawer.open { transform:translateX(0); }
+    .drawer-head { background:var(--brown); color:var(--cream); padding:1.4rem 1.5rem; display:flex; align-items:center; justify-content:space-between; }
+    .drawer-title { font-family:'Playfair Display',serif; font-size:1.25rem; font-weight:700; }
+    .close-btn { background:rgba(255,255,255,.15); border:none; color:var(--cream); border-radius:50%; width:36px; height:36px; font-size:1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    .close-btn:hover { background:rgba(255,255,255,.28); }
+    .cart-items { flex:1; overflow-y:auto; padding:1.2rem; display:flex; flex-direction:column; gap:.9rem; }
+    .cart-item { display:flex; gap:.9rem; align-items:flex-start; background:var(--paper); border-radius:14px; padding:.85rem; animation:slideIn .2s ease; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+    .item-thumb { width:52px; height:68px; border-radius:8px; object-fit:cover; flex-shrink:0; }
+    .item-emoji { font-size:1.8rem; flex-shrink:0; line-height:1; width:52px; text-align:center; }
+    .item-info { flex:1; min-width:0; }
+    .item-name { font-family:'Playfair Display',serif; font-size:.88rem; font-weight:700; line-height:1.3; }
+    .item-author { font-size:.72rem; color:var(--brown); opacity:.65; margin-top:.1rem; }
+    .item-price { font-size:.78rem; color:var(--brown); margin-top:.15rem; }
+    .item-subtotal { font-size:.78rem; font-weight:600; color:var(--amber); margin-top:.1rem; }
+    .item-controls { display:flex; align-items:center; gap:.45rem; margin-top:.5rem; flex-wrap:wrap; }
+    .qty-btn { background:var(--brown); color:var(--cream); border:none; border-radius:50%; width:26px; height:26px; font-size:.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+    .qty-btn:hover:not(:disabled) { background:var(--amber); color:var(--ink); }
+    .qty-btn:disabled { opacity:.35; cursor:not-allowed; }
+    .qty-num { font-weight:700; font-size:.9rem; min-width:20px; text-align:center; }
+    .delete-btn { background:rgba(176,74,47,.12); color:var(--rust); border:none; border-radius:8px; padding:.22rem .55rem; font-size:.75rem; cursor:pointer; display:flex; align-items:center; gap:.25rem; transition:background .15s; font-weight:600; }
+    .delete-btn:hover { background:rgba(176,74,47,.28); }
+    .stock-warn { font-size:.7rem; color:var(--rust); font-weight:600; margin-top:.25rem; }
+    .cart-empty { text-align:center; padding:3rem 1rem; color:var(--brown); opacity:.5; }
+    .cart-empty-icon { font-size:3rem; margin-bottom:.5rem; }
+    .cart-empty p { font-family:'Playfair Display',serif; font-size:1rem; }
+    .delivery-toggle { margin:.8rem 1.2rem; display:flex; background:var(--paper); border-radius:30px; padding:.3rem; gap:.3rem; }
+    .del-opt { flex:1; text-align:center; padding:.55rem; border-radius:25px; font-size:.8rem; font-weight:500; cursor:pointer; transition:all .2s; border:none; background:none; color:var(--brown); }
+    .del-opt.active { background:var(--brown); color:var(--cream); font-weight:600; }
+    .cart-footer { padding:1.2rem 1.5rem; border-top:1px solid var(--paper); background:var(--warm-white); }
+    .total-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1rem; }
+    .total-label { font-size:.85rem; color:var(--brown); opacity:.7; }
+    .total-amount { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; color:var(--brown); }
+    .checkout-btn { width:100%; background:linear-gradient(135deg,var(--amber),var(--amber-light)); color:var(--ink); border:none; border-radius:30px; padding:.9rem; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:700; cursor:pointer; transition:transform .15s,box-shadow .15s; }
+    .checkout-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 6px 20px rgba(200,131,42,.4); }
+    .checkout-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+    /* ── PAYMENT MODAL ── */
+    .modal-overlay { position:fixed; inset:0; z-index:300; background:rgba(26,18,8,.6); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .3s; }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
+    .modal { background:var(--warm-white); border-radius:24px; width:min(480px,100%); max-height:90vh; overflow-y:auto; box-shadow:0 24px 60px var(--shadow-deep); transform:scale(.9) translateY(20px); transition:transform .35s cubic-bezier(.4,0,.2,1); }
+    .modal-overlay.open .modal { transform:scale(1) translateY(0); }
+    .modal-head { background:linear-gradient(135deg,var(--brown),#3a2410); color:var(--cream); padding:2rem; border-radius:24px 24px 0 0; position:relative; }
+    .modal-close { position:absolute; top:1rem; right:1rem; background:rgba(255,255,255,.15); border:none; color:var(--cream); border-radius:50%; width:36px; height:36px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .modal-head h2 { font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:.3rem; }
+    .modal-head p { font-size:.82rem; opacity:.7; }
+    .modal-body { padding:1.8rem; }
+    .order-summary { background:var(--paper); border-radius:16px; padding:1.2rem; margin-bottom:1.4rem; }
+    .order-summary h3 { font-family:'Playfair Display',serif; font-size:.95rem; margin-bottom:.9rem; color:var(--brown); }
+    .order-line { display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:.4rem; color:var(--ink); gap:.5rem; }
+    .order-line span:first-child { flex:1; }
+    .order-total-line { display:flex; justify-content:space-between; font-weight:700; border-top:1px dashed rgba(92,61,30,.3); margin-top:.6rem; padding-top:.6rem; font-family:'Playfair Display',serif; font-size:1rem; }
+    .order-numero { font-size:.8rem; color:var(--green); font-weight:700; margin-top:.5rem; padding:.4rem .8rem; background:rgba(45,106,79,.1); border-radius:8px; display:none; }
+    .payment-info { background:linear-gradient(135deg,#fff9f0,#ffefd5); border:1.5px solid var(--amber); border-radius:16px; padding:1.2rem; margin-bottom:1.4rem; }
+    .payment-title { font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--brown); font-weight:700; margin-bottom:.8rem; }
+    .payment-methods { display:flex; gap:.8rem; margin-bottom:.8rem; }
+    .pay-method { flex:1; background:var(--brown); color:var(--cream); border-radius:12px; padding:.75rem; text-align:center; }
+    .pay-method strong { display:block; font-size:.65rem; opacity:.6; margin-bottom:.2rem; text-transform:uppercase; letter-spacing:.1em; }
+    .pay-number { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--amber-light); letter-spacing:.05em; }
+    .pay-name { font-size:.7rem; margin-top:.25rem; opacity:.7; }
+    .warning-box { display:flex; gap:.6rem; align-items:flex-start; font-size:.78rem; color:var(--brown); background:rgba(176,74,47,.08); border-radius:10px; padding:.7rem; }
+    .wa-btn { width:100%; background:#25D366; color:#fff; border:none; border-radius:30px; padding:.9rem; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.6rem; transition:transform .15s,box-shadow .15s; }
+    .wa-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,211,102,.35); }
+    .wa-btn:disabled { opacity:.6; cursor:not-allowed; }
+    .modal-status { text-align:center; font-size:.78rem; margin-top:.75rem; min-height:1.2em; }
+
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(100px); background:var(--brown); color:var(--cream); padding:.72rem 1.4rem; border-radius:30px; font-size:.86rem; font-weight:500; z-index:400; transition:transform .3s cubic-bezier(.4,0,.2,1); max-width:90vw; text-align:center; box-shadow:0 8px 24px var(--shadow-deep); }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+    .toast.warn    { background:var(--rust); }
+    .toast.success { background:var(--green); }
+
+    /* ── LOADING ── */
+    .loading { text-align:center; padding:4rem 2rem; color:var(--brown); grid-column:1/-1; }
+    .loading-spinner { font-size:2.5rem; display:block; animation:spin 2s linear infinite; margin-bottom:.5rem; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── FOOTER ── */
+    footer { background:var(--brown); color:rgba(250,246,239,.65); text-align:center; padding:2rem; font-size:.8rem; margin-top:4rem; }
+    footer strong { color:var(--cream); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width:640px) {
+      .search-bar { display:none; }
+      .hero { flex-direction:column; gap:1.5rem; padding:2.5rem 1.2rem 3rem; }
+      .hero-mascot { width:140px; }
+      .books-grid { grid-template-columns:repeat(2,1fr); gap:1rem; }
+      .catalog-section, .filters-bar { padding:0 1rem; }
+    }
+  </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark"><div class="container text-center"><span class="navbar-brand h1 mb-0">📚 MI LIBRERÍA LOCAL</span></div></nav>
+<!-- ══════ HEADER ══════ -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <img class="logo-img" src="1000263061.png" alt="Mascota" onerror="this.style.display='none'"/>
+      <div class="logo-text">
+        <span class="logo-title">Mi Librería Local</span>
+        <span class="logo-sub">Libros con alma 🐾</span>
+      </div>
+    </a>
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <div class="search-bar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#faf6ef" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar libros…" oninput="filterBooks()"/>
+      </div>
+      <button class="cart-btn" onclick="toggleCart()">
+        🛒 <span id="cartCount" class="cart-count">0</span> Mi pedido
+      </button>
+    </div>
+  </div>
+</header>
 
-<div class="search-section"><div class="container"><div class="row justify-content-center"><div class="col-md-6">
-    <input type="text" id="buscador" class="form-control search-input" placeholder="🔍 Buscar por título o autor..." onkeyup="filtrarLibros()">
-</div></div></div></div>
-
-<div class="container pb-5">
-    <div id="catalogo" class="row g-4"><div class="text-center py-5"><div class="spinner-border text-primary"></div><p>Cargando libros...</p></div></div>
+<!-- ══════ MISSION BAND ══════ -->
+<div class="mission-band">
+  🐾 Somos una librería con corazón: parte de cada venta apoya el bienestar de animales en nuestra comunidad. 🐱🐶
 </div>
 
-<button id="floating-cart" class="btn btn-primary d-flex align-items-center justify-content-center" onclick="abrirCarrito()">
-    🛒 <span id="cart-count" class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">0</span>
-</button>
+<!-- ══════ HERO ══════ -->
+<section class="hero">
+  <img class="hero-mascot" src="1000263061.png" alt="Nuestras mascotas" onerror="this.style.display='none'"/>
+  <div class="hero-content">
+    <div class="hero-tag">✨ Inventario en tiempo real</div>
+    <h1>Encuentra tu próximo<br/><em>libro favorito</em></h1>
+    <p>Libros nuevos y usados, escogidos con amor. Recoge en tienda o pide envío. Parte de cada compra apoya a los animales 🐾</p>
+    <div class="hero-badges">
+      <span class="badge">📦 Envío disponible</span>
+      <span class="badge">💚 Nequi · Daviplata</span>
+      <span class="badge">🐾 Apoya animales</span>
+      <span class="badge" id="heroBadgeBooks">📚 Cargando…</span>
+    </div>
+  </div>
+</section>
 
-<div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header"><h5>Mi Pedido</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-      <div class="modal-body">
-        <ul id="lista-carrito" class="list-group mb-3 text-center"></ul>
-        <div class="d-flex justify-content-between mb-3 px-2"><span class="h5">Total:</span><span id="total-pedido" class="h4 text-success fw-bold">$0</span></div>
-        <div class="row g-2">
-            <div class="col-12"><input type="text" id="c_nombre" class="form-control" placeholder="Nombre completo"></div>
-            <div class="col-12"><input type="tel" id="c_celular" class="form-control" placeholder="Celular (WhatsApp)"></div>
-            <div class="col-12"><select id="c_entrega" class="form-select" onchange="toggleEnvio()"><option value="Recojo en tienda">Recojo en Tienda</option><option value="Envio">Solicitar Envío</option></select></div>
+<!-- ══════ FILTERS ══════ -->
+<div class="filters-bar" id="categoryBar">
+  <button class="cat-pill active" onclick="filterCategory('Todos',this)">Todos</button>
+</div>
+
+<!-- ══════ CATALOG ══════ -->
+<section class="catalog-section">
+  <div class="section-header">
+    <h2 class="section-title">Nuestro catálogo</h2>
+    <span class="results-count" id="resultsCount"></span>
+    <div class="section-line"></div>
+  </div>
+  <div class="books-grid" id="booksGrid">
+    <div class="loading">
+      <span class="loading-spinner">📖</span>
+      Cargando inventario…
+    </div>
+  </div>
+</section>
+
+<!-- ══════ CART DRAWER ══════ -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-head">
+    <span class="drawer-title">🛒 Mi Pedido</span>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty"><div class="cart-empty-icon">🛍️</div><p>Tu carrito está vacío</p></div>
+  </div>
+  <div class="delivery-toggle">
+    <button class="del-opt active" id="optRecojo" onclick="setDelivery('recojo')">🏪 Recojo en tienda</button>
+    <button class="del-opt"        id="optEnvio"  onclick="setDelivery('envio')">🚚 Solicitar envío</button>
+  </div>
+  <div class="cart-footer">
+    <div class="total-row">
+      <span class="total-label">Total a pagar</span>
+      <span class="total-amount" id="totalAmount">$0</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="openPayment()" disabled>
+      💳 Proceder al pago
+    </button>
+  </div>
+</div>
+
+<!-- ══════ PAYMENT MODAL ══════ -->
+<div class="modal-overlay" id="paymentModal">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closePayment()">✕</button>
+      <h2>💳 Completar Pago</h2>
+      <p>Realiza la transferencia y envía tu soporte</p>
+    </div>
+    <div class="modal-body">
+
+      <div class="order-summary">
+        <h3>📋 Resumen del pedido</h3>
+        <div id="orderLines"></div>
+        <div class="order-total-line">
+          <span>Total</span><span id="modalTotal">$0</span>
         </div>
-        <div id="seccion-envio" class="mt-3 p-3 bg-light rounded border" style="display:none;"><input type="text" id="c_ciudad" class="form-control mb-2" placeholder="Ciudad"><input type="text" id="c_direccion" class="form-control" placeholder="Dirección"></div>
+        <div style="font-size:.78rem;color:var(--brown);opacity:.7;margin-top:.4rem" id="modalDelivery"></div>
+        <div class="order-numero" id="orderNumero"></div>
       </div>
-      <div class="modal-footer"><button id="btn-procesar" class="btn btn-success w-100 btn-lg" onclick="procesarCompra()">Siguiente: Pago</button></div>
+
+      <div class="payment-info">
+        <div class="payment-title">Transferir a:</div>
+        <div class="payment-methods">
+          <div class="pay-method">
+            <strong>Nequi</strong>
+            <div class="pay-number">313 387 8659</div>
+            <div class="pay-name">Mi Librería Local</div>
+          </div>
+          <div class="pay-method">
+            <strong>Daviplata</strong>
+            <div class="pay-number">313 387 8659</div>
+            <div class="pay-name">Mi Librería Local</div>
+          </div>
+        </div>
+        <div class="warning-box">⚠️ <span>Descarga el soporte (captura o PDF) antes de enviarlo por WhatsApp.</span></div>
+      </div>
+
+      <button class="wa-btn" id="waBtn" onclick="sendWhatsApp()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        Enviar soporte por WhatsApp
+      </button>
+      <div class="modal-status" id="modalStatus"></div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content text-center">
-      <div class="modal-header bg-primary text-white"><h5>💳 Completar Pago</h5></div>
-      <div class="modal-body">
-        <p class="text-muted">Pedido:</p><h4 id="display-pedido" class="fw-bold text-primary">---</h4>
-        <hr><p>Transferencia a:</p>
-        <div class="p-3 bg-light rounded border mb-3"><strong>NEQUI/DAVIPLATA:</strong><br><span class="h5">3133878659</span><br><strong>A nombre de:</strong> Tu Librería</div>
-        <p class="small text-danger">⚠️ Descarga el soporte (Captura o PDF) para WhatsApp.</p>
-      </div>
-      <div class="modal-footer"><button class="btn btn-success w-100" onclick="enviarWhatsAppFinal()">Enviar Soporte por WhatsApp</button></div>
-    </div>
-  </div>
-</div>
+<!-- ══════ TOAST ══════ -->
+<div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- ══════ FOOTER ══════ -->
+<footer>
+  <p style="font-size:1.4rem;margin-bottom:.5rem">🐾📚🐾</p>
+  <p><strong>Mi Librería Local</strong> — Hecho con amor para los amantes de la lectura</p>
+  <p style="margin-top:.4rem">Pago: Nequi / Daviplata <strong>313 387 8659</strong></p>
+  <p style="margin-top:.35rem;font-size:.72rem;opacity:.5">Una librería con propósito: apoyamos el bienestar animal 🐶🐱</p>
+</footer>
+
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyTccwwXvwAJZNZejQhXogBuTfgt6TEhF2OG_d_9nZhviBaGQD5DOzpZGBtETLb6narxQ/exec"; 
-    let TODOS_LOS_LIBROS = [];
-    let carrito = [];
-    let datosPedidoActual = {};
-    const modalUI = new bootstrap.Modal(document.getElementById('modalCarrito'));
-    const modalPago = new bootstrap.Modal(document.getElementById('modalPago'));
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  CONFIGURACIÓN — pega aquí la URL del Apps Script           ║
+// ╚══════════════════════════════════════════════════════════════╝
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-yfrd9AM6CBmpubYJkcgd8OFNHvW51Apf3LxfvCUCPpAFE3ww3KJX3gGQlX50hJha1A/exec';
+// Ejemplo: ''
 
-    async function cargarInventario() {
-        try {
-            const res = await fetch(API_URL);
-            TODOS_LOS_LIBROS = await res.json();
-            mostrarLibros(TODOS_LOS_LIBROS);
-        } catch (e) { document.getElementById('catalogo').innerHTML = '<p>Error al conectar.</p>'; }
-    }
+const WA_NUMBER = '573108752553';
 
-    function mostrarLibros(lista) {
-        const contenedor = document.getElementById('catalogo');
-        contenedor.innerHTML = '';
-        lista.forEach(libro => {
-            // USAMOS 'Stock Final' (Columna I)
-            if(libro['Stock Final'] > 0) {
-                let idD = libro.Imagen_URL.includes('id=') ? libro.Imagen_URL.split('id=')[1].split('&')[0] : (libro.Imagen_URL.includes('/d/') ? libro.Imagen_URL.split('/d/')[1].split('/')[0] : "");
-                const url = idD ? "https://lh3.googleusercontent.com/u/0/d/" + idD : "https://via.placeholder.com/150";
-                contenedor.innerHTML += `<div class="col-6 col-md-4 col-lg-3"><div class="card shadow-sm"><span class="badge-estado ${libro.Estado.includes('Nuevo')?'badge-nuevo':'badge-usado'}">${libro.Estado}</span><img src="${url}" class="card-img-top"><div class="card-body p-2 text-center"><h6 class="small fw-bold text-truncate">${libro.Titulo}</h6><p class="precio mb-2">$${Number(libro.Precio).toLocaleString('es-CO')}</p><button class="btn btn-primary btn-sm w-100" onclick="agregar('${libro.Titulo}', ${libro.Precio})">Agregar</button></div></div></div>`;
-            }
-        });
-    }
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  COLUMNAS del Sheet — ajusta si los nombres difieren        ║
+// ╚══════════════════════════════════════════════════════════════╝
+// El script doGet() devuelve JSON con las claves exactas de
+// los encabezados de tu Hoja 1. Si los renombras en el Sheet,
+// cámbialos también aquí.
+const COLS = {
+  id:        'ID',
+  titulo:    'Titulo',
+  autor:     'Autor',
+  estado:    'Estado',
+  precio:    'Precio',
+  imagen:    'Imagen_URL',   // columna con la URL de Drive
+  stockFin:  'Stock Final',  // columna de stock disponible
+};
 
-    function filtrarLibros() {
-        const b = document.getElementById('buscador').value.toLowerCase();
-        mostrarLibros(TODOS_LOS_LIBROS.filter(l => l.Titulo.toLowerCase().includes(b) || l.Autor.toLowerCase().includes(b)));
-    }
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  ESTADO GLOBAL                                              ║
+// ╚══════════════════════════════════════════════════════════════╝
+let allBooks      = [];
+let cart          = [];
+let deliveryMode  = 'recojo';
+let activeCategory= 'Todos';
+let searchTerm    = '';
+let pedidoActual  = '';  // número de pedido devuelto por el script
 
-    function agregar(t, p) { carrito.push({titulo: t, precio: p}); document.getElementById('cart-count').innerText = carrito.length; }
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  INICIALIZACIÓN                                             ║
+// ╚══════════════════════════════════════════════════════════════╝
+async function init() {
+  if (!APPS_SCRIPT_URL) {
+    console.warn('⚠️ APPS_SCRIPT_URL vacío. Agrega la URL del script desplegado.');
+  }
+  await loadInventory();
+}
 
-    function abrirCarrito() {
-        if(!carrito.length) return alert("Vacío");
-        const lista = document.getElementById('lista-carrito');
-        let total = 0; lista.innerHTML = '';
-        carrito.forEach((item, i) => { total += item.precio; lista.innerHTML += `<li class="list-group-item d-flex justify-content-between small">${item.titulo} <span>$${item.precio.toLocaleString('es-CO')}</span><button class="btn btn-sm text-danger" onclick="eliminar(${i})">✕</button></li>`; });
-        document.getElementById('total-pedido').innerText = `$${total.toLocaleString('es-CO')}`;
-        modalUI.show();
-    }
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  CARGA INVENTARIO — usa doGet() del Apps Script             ║
+// ╚══════════════════════════════════════════════════════════════╝
+async function loadInventory() {
+  if (!APPS_SCRIPT_URL) {
+    allBooks = SAMPLE_BOOKS;
+    buildFilters(); renderBooks();
+    document.getElementById('heroBadgeBooks').textContent = `📚 ${allBooks.length} títulos (muestra)`;
+    showToast('⚠️ Configura APPS_SCRIPT_URL para ver el inventario real', 'warn');
+    return;
+  }
 
-    function eliminar(i) { carrito.splice(i, 1); document.getElementById('cart-count').innerText = carrito.length; if(!carrito.length) modalUI.hide(); else abrirCarrito(); }
+  try {
+    const res  = await fetch(APPS_SCRIPT_URL);
+    const json = await res.json();
 
-    function toggleEnvio() { document.getElementById('seccion-envio').style.display = document.getElementById('c_entrega').value === 'Envio' ? 'block' : 'none'; }
+    if (json.error) throw new Error(json.error);
 
-    async function procesarCompra() {
-        const n = document.getElementById('c_nombre').value, c = document.getElementById('c_celular').value;
-        if(!n || !c) return alert("Completa tus datos");
-        
-        document.getElementById('btn-procesar').innerText = "Validando Stock...";
-        document.getElementById('btn-procesar').disabled = true;
-
-        datosPedidoActual = {
-            libros: carrito.map(i => i.titulo).join(", "),
-            cliente: n, celular: c,
-            entrega: document.getElementById('c_entrega').value,
-            ciudad: document.getElementById('c_ciudad').value || "N/A",
-            direccion: document.getElementById('c_direccion').value || "N/A",
-            total: carrito.reduce((a, b) => a + b.precio, 0)
+    // Mapea el JSON del Sheet a la estructura interna de la página
+    allBooks = json
+      .filter(row => row[COLS.titulo] && String(row[COLS.titulo]).trim())
+      .map((row, idx) => {
+        const rawImg = String(row[COLS.imagen] || '').trim();
+        return {
+          id:      String(row[COLS.id] || idx + 1),
+          title:   String(row[COLS.titulo]  || '').trim(),
+          author:  String(row[COLS.autor]   || '—').trim(),
+          estado:  String(row[COLS.estado]  || '').trim(),
+          price:   parsePrecio(row[COLS.precio]),
+          stock:   parseInt(row[COLS.stockFin]) || 0,
+          image:   row['_imagen_directa'] || convertDriveUrl(rawImg),
+          rawImg,
+          emoji:   randomEmoji(),
         };
+      });
 
-        try {
-            const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(datosPedidoActual) });
-            const respText = await response.text();
+  } catch (err) {
+    console.warn('Error cargando inventario:', err.message);
+    allBooks = SAMPLE_BOOKS;
+    showToast('⚠️ No se pudo cargar el inventario. Mostrando datos de muestra.', 'warn');
+  }
 
-            if (respText.includes("ERROR_STOCK")) {
-                alert("⚠️ AGOTADO: " + respText.split(":")[1] + " ya no tiene stock disponible. Por favor quítalo del carrito.");
-                document.getElementById('btn-procesar').innerText = "Siguiente: Pago";
-                document.getElementById('btn-procesar').disabled = false;
-            } else {
-                document.getElementById('display-pedido').innerText = respText;
-                datosPedidoActual.id = respText;
-                modalUI.hide();
-                modalPago.show();
-            }
-        } catch(e) { alert("Error de conexión"); }
+  buildFilters();
+  renderBooks();
+  document.getElementById('heroBadgeBooks').textContent = `📚 ${allBooks.length} títulos`;
+}
+
+// ─── Convierte URL de Drive a formato de imagen directa ───────
+function convertDriveUrl(url) {
+  if (!url) return '';
+  if (url.includes('lh3.googleusercontent') || url.includes('thumbnail?id=') || url.includes('uc?export=view')) return url;
+  const m1 = url.match(/\/file\/d\/([^\/\?]+)/);
+  if (m1) return `https://drive.google.com/thumbnail?id=${m1[1]}&sz=w400`;
+  const m2 = url.match(/[?&]id=([^&]+)/);
+  if (m2) return `https://drive.google.com/thumbnail?id=${m2[1]}&sz=w400`;
+  if (/^[a-zA-Z0-9_-]{25,}$/.test(url)) return `https://drive.google.com/thumbnail?id=${url}&sz=w400`;
+  return url;
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  FILTROS                                                    ║
+// ╚══════════════════════════════════════════════════════════════╝
+function buildFilters() {
+  const estados = ['Todos', ...[...new Set(allBooks.map(b => b.estado).filter(Boolean))].sort()];
+  document.getElementById('categoryBar').innerHTML = estados.map((c, i) => {
+    const emoji = c.toLowerCase() === 'nuevo' ? '🆕 ' : c.toLowerCase() === 'usado' ? '♻️ ' : '';
+    return `<button class="cat-pill${i===0?' active':''}" onclick="filterCategory('${esc(c)}',this)">${emoji}${esc(c)}</button>`;
+  }).join('');
+}
+
+function filterCategory(cat, el) {
+  activeCategory = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderBooks();
+}
+function filterBooks() {
+  searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  renderBooks();
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  RENDER LIBROS                                              ║
+// ╚══════════════════════════════════════════════════════════════╝
+function renderBooks() {
+  const grid = document.getElementById('booksGrid');
+  let books  = allBooks;
+  if (activeCategory !== 'Todos') books = books.filter(b => b.estado === activeCategory);
+  if (searchTerm) books = books.filter(b =>
+    b.title.toLowerCase().includes(searchTerm) ||
+    b.author.toLowerCase().includes(searchTerm)
+  );
+
+  document.getElementById('resultsCount').textContent =
+    `${books.length} resultado${books.length !== 1 ? 's' : ''}`;
+
+  if (!books.length) {
+    grid.innerHTML = '<div class="loading"><span>📭</span><br/>No se encontraron libros</div>';
+    return;
+  }
+
+  grid.innerHTML = books.map(b => {
+    const inCartQty = (cart.find(i => i.id === b.id) || {qty: 0}).qty;
+    const remaining = b.stock - inCartQty;
+    const isOut     = b.stock <= 0;
+    const maxed     = remaining <= 0 && !isOut;
+
+    let badgeClass = 'ok', badgeText = `${b.stock} disp.`;
+    if (isOut)          { badgeClass = 'out'; badgeText = 'Agotado'; }
+    else if (b.stock <= 3) { badgeClass = 'low'; badgeText = `¡Solo ${b.stock}!`; }
+
+    const imgHTML = b.image
+      ? `<img src="${esc(b.image)}" alt="${esc(b.title)}" loading="lazy"
+             onerror="this.style.display='none';this.nextSibling.style.display='flex'"/>
+         <span class="book-cover-placeholder" style="display:none">${b.emoji}</span>`
+      : `<span class="book-cover-placeholder">${b.emoji}</span>`;
+
+    return `
+    <div class="book-card">
+      <div class="book-cover" style="background:${hashColor(b.title)}">
+        ${imgHTML}
+        <span class="stock-badge ${badgeClass}">${badgeText}</span>
+        ${b.estado ? `<span class="estado-badge">${esc(b.estado)}</span>` : ''}
+      </div>
+      <div class="book-info">
+        <div class="book-title">${esc(b.title)}</div>
+        <div class="book-author">${esc(b.author)}</div>
+        <div class="book-footer">
+          <span class="book-price">${formatPrice(b.price)}</span>
+          ${isOut
+            ? `<span class="out-label">Agotado</span>`
+            : `<button class="add-btn" onclick="addToCart('${b.id}')"
+                       ${maxed ? 'disabled title="Stock máximo en carrito"' : ''}>+</button>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  CARRITO                                                    ║
+// ╚══════════════════════════════════════════════════════════════╝
+function addToCart(bookId) {
+  const book = allBooks.find(b => b.id === bookId);
+  if (!book) return;
+  const existing = cart.find(i => i.id === bookId);
+  const current  = existing ? existing.qty : 0;
+
+  if (current >= book.stock) {
+    showToast(`⚠️ Solo hay ${book.stock} unidad${book.stock !== 1 ? 'es' : ''} disponibles`, 'warn');
+    return;
+  }
+  if (existing) existing.qty++;
+  else cart.push({ ...book, qty: 1 });
+
+  updateCart(); renderBooks();
+  showToast(`📖 "${book.title}" añadido`);
+}
+
+function updateQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  const book   = allBooks.find(b => b.id === id);
+  const newQty = item.qty + delta;
+  if (delta > 0 && book && newQty > book.stock) {
+    showToast(`⚠️ Solo hay ${book.stock} unidad${book.stock !== 1 ? 'es' : ''} disponibles`, 'warn');
+    return;
+  }
+  item.qty = newQty;
+  if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+  updateCart(); renderBooks();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCart(); renderBooks();
+  showToast('🗑️ Libro eliminado del pedido');
+}
+
+function updateCart() {
+  const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent   = count;
+  document.getElementById('totalAmount').textContent = formatPrice(total);
+  document.getElementById('checkoutBtn').disabled    = count === 0;
+
+  const wrap = document.getElementById('cartItems');
+  if (!cart.length) {
+    wrap.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🛍️</div><p>Tu carrito está vacío</p></div>';
+    return;
+  }
+
+  wrap.innerHTML = cart.map(item => {
+    const book  = allBooks.find(b => b.id === item.id);
+    const max   = book ? book.stock : item.qty;
+    const atMax = item.qty >= max;
+    const thumb = item.image
+      ? `<img class="item-thumb" src="${esc(item.image)}" alt="${esc(item.title)}"
+             onerror="this.style.display='none';this.nextSibling.style.display='block'"/>
+         <span class="item-emoji" style="display:none">${item.emoji}</span>`
+      : `<span class="item-emoji">${item.emoji}</span>`;
+
+    return `
+    <div class="cart-item">
+      ${thumb}
+      <div class="item-info">
+        <div class="item-name">${esc(item.title)}</div>
+        <div class="item-author">${esc(item.author)}</div>
+        <div class="item-price">${formatPrice(item.price)} c/u ${item.estado ? `· ${esc(item.estado)}` : ''}</div>
+        <div class="item-subtotal">Subtotal: ${formatPrice(item.price * item.qty)}</div>
+        <div class="item-controls">
+          <button class="qty-btn" onclick="updateQty('${item.id}',-1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="updateQty('${item.id}',1)" ${atMax ? 'disabled' : ''}>+</button>
+          <button class="delete-btn" onclick="removeFromCart('${item.id}')">🗑️ Eliminar</button>
+        </div>
+        ${atMax ? `<div class="stock-warn">⚠️ Máximo disponible: ${max} ud.</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleCart() {
+  document.getElementById('cartDrawer').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+function setDelivery(mode) {
+  deliveryMode = mode;
+  document.getElementById('optRecojo').classList.toggle('active', mode === 'recojo');
+  document.getElementById('optEnvio').classList.toggle('active',  mode === 'envio');
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  PAGO — openPayment / sendWhatsApp                          ║
+// ╚══════════════════════════════════════════════════════════════╝
+function openPayment() {
+  pedidoActual = '';
+  const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery = deliveryMode === 'envio' ? '🚚 Solicitar envío' : '🏪 Recojo en tienda';
+
+  document.getElementById('modalTotal').textContent   = formatPrice(total);
+  document.getElementById('modalDelivery').textContent = delivery;
+  document.getElementById('orderLines').innerHTML = cart.map(i =>
+    `<div class="order-line">
+       <span>${i.emoji} ${esc(i.title)} ×${i.qty} ${i.estado ? `(${esc(i.estado)})` : ''}</span>
+       <span>${formatPrice(i.price * i.qty)}</span>
+     </div>`
+  ).join('');
+
+  const numEl = document.getElementById('orderNumero');
+  numEl.style.display = 'none'; numEl.textContent = '';
+  document.getElementById('modalStatus').textContent = '';
+  document.getElementById('waBtn').disabled = false;
+  document.getElementById('paymentModal').classList.add('open');
+}
+function closePayment() {
+  document.getElementById('paymentModal').classList.remove('open');
+}
+
+async function sendWhatsApp() {
+  const btn    = document.getElementById('waBtn');
+  const status = document.getElementById('modalStatus');
+  btn.disabled = true;
+  status.textContent = '⏳ Registrando pedido en el sistema…';
+  status.style.color = 'var(--brown)';
+
+  const total    = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const delivery = deliveryMode === 'envio' ? '🚚 Solicitar envío' : '🏪 Recojo en tienda';
+  const fecha    = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+
+  // ── Payload que espera doPost() ─────────────────────────────
+  const payload = {
+    libros: cart.map(i => ({
+      id:       i.id,
+      titulo:   i.title,
+      autor:    i.author,
+      estado:   i.estado || '',
+      precio:   i.price,
+      cantidad: i.qty,
+      subtotal: i.price * i.qty,
+    })),
+    entrega:   delivery,
+    total,
+    cliente:   'Cliente web',
+    celular:   '—',
+    direccion: deliveryMode === 'envio' ? 'Por confirmar vía WhatsApp' : 'N/A',
+    ciudad:    deliveryMode === 'envio' ? 'Por confirmar vía WhatsApp' : 'N/A',
+  };
+
+  // ── 1. Registrar en Google Sheets ──────────────────────────
+  let numeroPedido = '';
+  if (APPS_SCRIPT_URL) {
+    try {
+      const res  = await fetch(APPS_SCRIPT_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'text/plain' }, // Apps Script requiere text/plain para doPost
+        body:    JSON.stringify(payload),
+      });
+      const txt = await res.text();
+
+      if (txt.startsWith('ERROR_STOCK:')) {
+        const libroSinStock = txt.replace('ERROR_STOCK:', '');
+        status.textContent = `⚠️ "${libroSinStock}" ya no tiene stock disponible. Recarga la página.`;
+        status.style.color = 'var(--rust)';
+        btn.disabled = false;
+        showToast('⚠️ Stock agotado para uno de los libros', 'warn');
+        return;
+      }
+
+      if (txt.startsWith('LIB-')) {
+        numeroPedido = txt.trim();
+        pedidoActual = numeroPedido;
+        const numEl = document.getElementById('orderNumero');
+        numEl.textContent = `✅ N° de pedido: ${numeroPedido}`;
+        numEl.style.display = 'block';
+      }
+    } catch (err) {
+      console.warn('Error registrando pedido:', err.message);
+      // Continúa de todas formas con WhatsApp
     }
+  }
 
-    function enviarWhatsAppFinal() {
-        let msg = `👋 ¡Hola! Realicé mi pago.\n🆔 *PEDIDO:* ${datosPedidoActual.id}\n👤 *Cliente:* ${datosPedidoActual.cliente}\n📖 *Libros:* ${datosPedidoActual.libros}\n💰 *Total:* $${datosPedidoActual.total.toLocaleString('es-CO')}`;
-        window.open(`https://wa.me/573174663378?text=${encodeURIComponent(msg)}`);
-        location.reload();
-    }
+  // ── 2. Armar y abrir WhatsApp ───────────────────────────────
+  const lines = cart.map(i =>
+    `  • ${i.title}${i.estado ? ` (${i.estado})` : ''} ×${i.qty} = ${formatPrice(i.price * i.qty)}`
+  ).join('\n');
 
-    cargarInventario();
+  const msg = encodeURIComponent(
+    `📚 *PEDIDO — Mi Librería Local*\n` +
+    (numeroPedido ? `🔖 *N° ${numeroPedido}*\n` : '') +
+    `📅 ${fecha}\n\n` +
+    `*Libros:*\n${lines}\n\n` +
+    `💰 *Total: ${formatPrice(total)}*\n` +
+    `${delivery}\n\n` +
+    `Adjunto el soporte de pago. ¡Gracias! 🐾`
+  );
+  window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
+
+  // ── 3. Feedback final ───────────────────────────────────────
+  if (numeroPedido) {
+    status.textContent = `✅ Pedido ${numeroPedido} registrado. WhatsApp abierto.`;
+    status.style.color = 'var(--green)';
+    showToast(`✅ Pedido ${numeroPedido} registrado correctamente`, 'success');
+  } else {
+    status.textContent = 'WhatsApp abierto. El registro automático no está configurado.';
+    status.style.color = 'var(--brown)';
+  }
+  btn.disabled = false;
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  HELPERS                                                    ║
+// ╚══════════════════════════════════════════════════════════════╝
+function parsePrecio(v) {
+  if (!v && v !== 0) return 0;
+  const n = parseFloat(String(v).replace(/[^0-9.,]/g,'').replace(',','.'));
+  return isNaN(n) ? 0 : n;
+}
+function formatPrice(n) { return '$' + Number(n).toLocaleString('es-CO'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function randomEmoji() {
+  const e = ['📖','📗','📘','📙','📕','🔖','✍️','🌟','🎭','🌿','🦋','🏔️','🌙','⚡','🎪'];
+  return e[Math.floor(Math.random() * e.length)];
+}
+function hashColor(s) {
+  let h = 0; for (const c of s) h = (h<<5)-h+c.charCodeAt(0);
+  const p = ['linear-gradient(145deg,#5c3d1e,#3a2410)','linear-gradient(145deg,#2d4a3e,#1a2d24)',
+             'linear-gradient(145deg,#4a3320,#2d1f12)','linear-gradient(145deg,#3d2b1e,#5c4030)',
+             'linear-gradient(145deg,#2a3d1e,#1e2d15)','linear-gradient(145deg,#3a1e3d,#2a1028)'];
+  return p[Math.abs(h) % p.length];
+}
+let toastTimer = null;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (type ? ' '+type : '');
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  DATOS DE MUESTRA (cuando APPS_SCRIPT_URL está vacío)       ║
+// ╚══════════════════════════════════════════════════════════════╝
+const SAMPLE_BOOKS = [
+  {id:'1', title:'El amor en los tiempos del cólera', author:'García Márquez', estado:'Nuevo',  price:60000, stock:2, emoji:'🌹', image:''},
+  {id:'2', title:'El perfume',                        author:'Patrick Süskind', estado:'Usado',  price:70000, stock:2, emoji:'🌸', image:''},
+  {id:'3', title:'Libro de Inglés',                   author:'Desconocido',     estado:'Usado',  price:30000, stock:1, emoji:'📘', image:''},
+  {id:'4', title:'El laberinto de la felicidad',      author:'Titania Hardie',  estado:'Usado',  price:40000, stock:1, emoji:'🌟', image:''},
+  {id:'5', title:'Música de huesos',                  author:'Germán Hermida',  estado:'Usado',  price:40000, stock:0, emoji:'🎵', image:''},
+  {id:'6', title:'La cabina mágica',                  author:'Norton Juster',   estado:'Usado',  price:45000, stock:1, emoji:'✨', image:''},
+];
+
+init();
 </script>
 </body>
 </html>
