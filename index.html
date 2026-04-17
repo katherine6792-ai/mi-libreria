@@ -78,15 +78,15 @@
     .book-cover-placeholder { font-size:3.5rem; opacity:.4; }
     .stock-badge { position:absolute; top:8px; left:8px; color:#fff; font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:.22rem .6rem; border-radius:20px; }
     .stock-badge.out { background:var(--rust); }
-    .stock-badge.low { background:var(--amber); color:var(--ink); }
+    .stock-badge.low { background:var(--amber); color:var(--brown); }
     .stock-badge.ok  { background:var(--green); }
     .estado-badge { position:absolute; top:8px; right:8px; background:rgba(26,18,8,.7); color:var(--cream); font-size:.6rem; font-weight:600; padding:.2rem .55rem; border-radius:20px; backdrop-filter:blur(4px); }
     .book-info { padding:1rem; flex:1; display:flex; flex-direction:column; gap:.35rem; }
-    .book-title { font-family:'Playfair Display',serif; font-size:.93rem; font-weight:700; line-height:1.3; color:var(--ink); }
+    .book-title { font-family:'Playfair Display',serif; font-size:.93rem; font-weight:700; line-height:1.3; color:var(--brown); }
     .book-author { font-size:.76rem; color:var(--brown); opacity:.7; }
     .book-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:.5rem; }
     .book-price { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--brown); }
-    .add-btn { background:var(--amber); color:var(--ink); border:none; border-radius:50%; width:34px; height:34px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s,background .15s; font-weight:700; }
+    .add-btn { background:var(--amber); color:var(--brown); border:none; border-radius:50%; width:34px; height:34px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s,background .15s; font-weight:700; }
     .add-btn:hover:not(:disabled) { background:var(--amber-light); transform:scale(1.15) rotate(90deg); }
     .add-btn:disabled { background:#ccc; color:#888; cursor:not-allowed; }
     .out-label { font-size:.72rem; font-weight:600; color:var(--rust); background:rgba(176,74,47,.1); border-radius:20px; padding:.25rem .7rem; }
@@ -112,7 +112,7 @@
     .item-subtotal { font-size:.78rem; font-weight:600; color:var(--amber); margin-top:.1rem; }
     .item-controls { display:flex; align-items:center; gap:.45rem; margin-top:.5rem; flex-wrap:wrap; }
     .qty-btn { background:var(--brown); color:var(--cream); border:none; border-radius:50%; width:26px; height:26px; font-size:.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
-    .qty-btn:hover:not(:disabled) { background:var(--amber); color:var(--ink); }
+    .qty-btn:hover:not(:disabled) { background:var(--amber); color:var(--brown); }
     .qty-btn:disabled { opacity:.35; cursor:not-allowed; }
     .qty-num { font-weight:700; font-size:.9rem; min-width:20px; text-align:center; }
     .delete-btn { background:rgba(176,74,47,.12); color:var(--rust); border:none; border-radius:8px; padding:.22rem .55rem; font-size:.75rem; cursor:pointer; display:flex; align-items:center; gap:.25rem; transition:background .15s; font-weight:600; }
@@ -128,7 +128,7 @@
     .total-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:1rem; }
     .total-label { font-size:.85rem; color:var(--brown); opacity:.7; }
     .total-amount { font-family:'Playfair Display',serif; font-size:1.6rem; font-weight:900; color:var(--brown); }
-    .checkout-btn { width:100%; background:linear-gradient(135deg,var(--amber),var(--amber-light)); color:var(--ink); border:none; border-radius:30px; padding:.9rem; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:700; cursor:pointer; transition:transform .15s,box-shadow .15s; }
+    .checkout-btn { width:100%; background:linear-gradient(135deg,var(--amber),var(--amber-light)); color:var(--brown); border:none; border-radius:30px; padding:.9rem; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:700; cursor:pointer; transition:transform .15s,box-shadow .15s; }
     .checkout-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 6px 20px rgba(200,131,42,.4); }
     .checkout-btn:disabled { opacity:.4; cursor:not-allowed; }
 
@@ -144,7 +144,7 @@
     .modal-body { padding:1.8rem; }
     .order-summary { background:var(--paper); border-radius:16px; padding:1.2rem; margin-bottom:1.4rem; }
     .order-summary h3 { font-family:'Playfair Display',serif; font-size:.95rem; margin-bottom:.9rem; color:var(--brown); }
-    .order-line { display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:.4rem; color:var(--ink); gap:.5rem; }
+    .order-line { display:flex; justify-content:space-between; font-size:.84rem; margin-bottom:.4rem; color:var(--brown); gap:.5rem; }
     .order-line span:first-child { flex:1; }
     .order-total-line { display:flex; justify-content:space-between; font-weight:700; border-top:1px dashed rgba(92,61,30,.3); margin-top:.6rem; padding-top:.6rem; font-family:'Playfair Display',serif; font-size:1rem; }
     .order-numero { font-size:.8rem; color:var(--green); font-weight:700; margin-top:.5rem; padding:.4rem .8rem; background:rgba(45,106,79,.1); border-radius:8px; display:none; }
@@ -168,7 +168,7 @@
     .step-indicator { display:flex; gap:.5rem; margin-bottom:1.5rem; align-items:center; }
     .step-dot { width:28px; height:28px; border-radius:50%; background:var(--paper); border:2px solid rgba(92,61,30,.2); display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; color:var(--brown); transition:all .25s; flex-shrink:0; }
     .step-dot.active { background:var(--brown); color:var(--cream); border-color:var(--brown); }
-    .step-dot.done { background:var(--amber); color:var(--ink); border-color:var(--amber); }
+    .step-dot.done { background:var(--amber); color:var(--brown); border-color:var(--amber); }
     .step-line { flex:1; height:2px; background:var(--paper); transition:background .25s; }
     .step-line.done { background:var(--amber); }
 
@@ -187,7 +187,7 @@
     .datos-box { background:rgba(92,61,30,.06); border:1.5px solid rgba(92,61,30,.18); border-radius:12px; padding:.85rem 1rem; margin-top:.8rem; }
     .datos-check { display:flex; align-items:flex-start; gap:.6rem; cursor:pointer; }
     .datos-check input[type=checkbox] { width:17px; height:17px; margin-top:.15rem; flex-shrink:0; accent-color:var(--brown); cursor:pointer; }
-    .datos-check-label { font-size:.76rem; color:var(--ink); line-height:1.55; }
+    .datos-check-label { font-size:.76rem; color:var(--brown); line-height:1.55; }
     .datos-check-label strong { color:var(--brown); }
     .field-error.datos-err { margin-top:.4rem; }
     /* ── DELIVERY INFO BOXES ── */
@@ -197,14 +197,14 @@
     .deli-box-title { font-weight:700; font-size:.84rem; margin-bottom:.35rem; display:flex; align-items:center; gap:.45rem; }
     .deli-box.recojo .deli-box-title { color:var(--green); }
     .deli-box.envio  .deli-box-title { color:#a06010; }
-    .deli-box p { font-size:.79rem; line-height:1.65; color:var(--ink); opacity:.85; }
+    .deli-box p { font-size:.79rem; line-height:1.65; color:var(--brown); opacity:.85; }
     .deli-box p+p { margin-top:.3rem; }
 
     /* ── STEP BUTTONS ── */
     .step-btns { display:flex; gap:.8rem; margin-top:1.2rem; }
     .btn-back { background:var(--paper); color:var(--brown); border:1.5px solid rgba(92,61,30,.18); border-radius:30px; padding:.75rem 1.2rem; font-family:'DM Sans',sans-serif; font-size:.88rem; font-weight:600; cursor:pointer; transition:background .15s; flex-shrink:0; }
     .btn-back:hover { background:rgba(92,61,30,.1); }
-    .btn-next { flex:1; background:linear-gradient(135deg,var(--amber),var(--amber-light)); color:var(--ink); border:none; border-radius:30px; padding:.8rem; font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:700; cursor:pointer; transition:transform .15s,box-shadow .15s; }
+    .btn-next { flex:1; background:linear-gradient(135deg,var(--amber),var(--amber-light)); color:var(--brown); border:none; border-radius:30px; padding:.8rem; font-family:'DM Sans',sans-serif; font-size:.92rem; font-weight:700; cursor:pointer; transition:transform .15s,box-shadow .15s; }
     .btn-next:hover { transform:translateY(-2px); box-shadow:0 5px 18px rgba(200,131,42,.35); }
 
     /* ── TOAST ── */
@@ -240,7 +240,7 @@
       .mobile-search input {
         flex:1; border:none; outline:none; background:none;
         font-family:'DM Sans',sans-serif; font-size:.9rem;
-        color:var(--ink);
+        color:var(--brown);
       }
       .mobile-search input::placeholder { color:rgba(26,18,8,.4); }
       /* Resto responsive */
