@@ -10,7 +10,7 @@
       --cream:       #faf6ef;
       --warm-white:  #fff8f0;
       --ink:         #1a1208;
-      --brown:       #5c3d1e;
+      --brown:       #f5f2ed;
       --amber:       #c8832a;
       --amber-light: #e8a84a;
       --sage:        #6b7c5c;
@@ -1010,7 +1010,7 @@ function randomEmoji() {
 }
 function hashColor(s) {
   let h = 0; for (const c of s) h = (h<<5)-h+c.charCodeAt(0);
-  const p = ['linear-gradient(145deg,#5c3d1e,#3a2410)','linear-gradient(145deg,#2d4a3e,#1a2d24)',
+  const p = ['linear-gradient(145deg,#f5f2ed,#3a2410)','linear-gradient(145deg,#2d4a3e,#1a2d24)',
              'linear-gradient(145deg,#4a3320,#2d1f12)','linear-gradient(145deg,#3d2b1e,#5c4030)',
              'linear-gradient(145deg,#2a3d1e,#1e2d15)','linear-gradient(145deg,#3a1e3d,#2a1028)'];
   return p[Math.abs(h) % p.length];
