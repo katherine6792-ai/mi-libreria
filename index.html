@@ -182,6 +182,14 @@
     .field-error { font-size:.71rem; color:var(--rust); margin-top:.25rem; display:none; }
     .field-error.show { display:block; }
 
+
+    /* ── AUTORIZACIÓN DATOS ── */
+    .datos-box { background:rgba(92,61,30,.06); border:1.5px solid rgba(92,61,30,.18); border-radius:12px; padding:.85rem 1rem; margin-top:.8rem; }
+    .datos-check { display:flex; align-items:flex-start; gap:.6rem; cursor:pointer; }
+    .datos-check input[type=checkbox] { width:17px; height:17px; margin-top:.15rem; flex-shrink:0; accent-color:var(--brown); cursor:pointer; }
+    .datos-check-label { font-size:.76rem; color:var(--ink); line-height:1.55; }
+    .datos-check-label strong { color:var(--brown); }
+    .field-error.datos-err { margin-top:.4rem; }
     /* ── DELIVERY INFO BOXES ── */
     .deli-box { border-radius:14px; padding:.9rem 1.1rem; margin-bottom:1.1rem; }
     .deli-box.recojo { background:rgba(45,106,79,.07); border:1.5px solid rgba(45,106,79,.22); }
@@ -404,6 +412,17 @@
             <div class="field-error" id="errDireccion">Ingresa tu dirección</div>
           </div>
         </div>
+        <!-- Autorización tratamiento de datos -->
+        <div class="datos-box">
+          <label class="datos-check" for="fDatos">
+            <input type="checkbox" id="fDatos"/>
+            <span class="datos-check-label">
+              Autorizo a <strong>Mi Librería Local</strong> el tratamiento de mis datos personales (nombre, celular y dirección) para gestionar mi pedido, de acuerdo con la <strong>Ley 1581 de 2012</strong> de protección de datos personales de Colombia. Mis datos no serán compartidos con terceros. <span class="req">*</span>
+            </span>
+          </label>
+          <div class="field-error datos-err" id="errDatos">Debes autorizar el tratamiento de datos para continuar</div>
+        </div>
+
         <div class="step-btns">
           <button class="btn-back" onclick="goStep(1)">← Volver</button>
           <button class="btn-next" onclick="goStep(3)">Continuar → Pagar</button>
@@ -843,6 +862,14 @@ function validateForm() {
     if (!direccion) { errDir.classList.add('show'); inpDir.classList.add('error'); ok = false; }
     else            { errDir.classList.remove('show'); inpDir.classList.remove('error'); }
   }
+  // Autorización tratamiento de datos (siempre obligatorio)
+  const chkDatos = document.getElementById('fDatos');
+  const errDatos = document.getElementById('errDatos');
+  if (chkDatos && !chkDatos.checked) {
+    errDatos.classList.add('show'); ok = false;
+  } else if (errDatos) {
+    errDatos.classList.remove('show');
+  }
   return ok;
 }
 
@@ -926,7 +953,7 @@ function abrirWhatsApp(numPedido, nombre, celular, ciudad, direccion, delivery, 
   }
   const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
   const lines = cart.map(i =>
-    '  • ' + i.title + (i.estado ? ' (' + i.estado + ')' : '') + ' x' + i.qty + ' = ' + formatPrice(i.price * i.qty)
+    (i.emoji || '📖') + ' ' + i.title + (i.estado ? ' (' + i.estado + ')' : '') + ' x' + i.qty + ' = ' + formatPrice(i.price * i.qty)
   ).join('\n');
   let msg = '📚 *PEDIDO — Mi Librería Local*\n';
   if (numPedido) msg += '🔖 *N° ' + numPedido + '*\n';
@@ -942,6 +969,7 @@ function abrirWhatsApp(numPedido, nombre, celular, ciudad, direccion, delivery, 
   msg += delivery + '\n';
   if (deliveryMode === 'envio') msg += '_(El envío se paga contraentrega al mensajero)_\n';
   msg += '\nAdjunto el soporte de pago. ¡Gracias! 🐾';
+  msg += '\n✅ _El cliente autorizó el tratamiento de sus datos (Ley 1581/2012)_';
   window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
